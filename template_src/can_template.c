@@ -266,6 +266,15 @@ void CheckForFlags()
 	EDIS;
 }
 
+void SendCAN(unsigned int Mbox)
+{
+	CopyMCToShadow();
+	CheckBusOff();
+	CreateMask(Mbox);
+	BeginTransmission();
+	CheckForFlags();
+}
+
 void BeginTransmission()
 {
 	//todo Nathan: calibrate sendcan stopwatch

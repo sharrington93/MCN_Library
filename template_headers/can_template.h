@@ -106,6 +106,8 @@ void ReadCommand();
  */
 void CheckForFlags();
 
+void SendCAN(unsigned int Mbox);
+
 /**
  * Starts sending mailboxes that have been flagged in the mask
  */

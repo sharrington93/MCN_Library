@@ -85,6 +85,7 @@ void RestartCpuTimer2()
 void HeartBeat(int userFlags)
 {
 	FillHeartbeat(HEARTBEAT_BOX, userFlags);
+	SendCAN(HEARTBEAT_BOX);
 }
 
 
