@@ -1,0 +1,7 @@
+[Dd]ebug*/
+.launches*/
+[Rr]elease*/
+!*.lib
+![Dd]ebug/template_src/boot_template.obj
+![Dd]ebug/template_src/SharedBoot_template.obj
+![Dd]ebug/ti_src/DSP2803x_GlobalVariableDefs.obj
