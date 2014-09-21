@@ -4,7 +4,6 @@
  *  Created on: May 17, 2014
  *      Author: Sean
  */
-#include "all.h"
 #ifndef CAN_TEMPLATE_H_
 #define CAN_TEMPLATE_H_
 
@@ -105,6 +104,8 @@ void ReadCommand();
  * to the SystemSensorInit function. If so, a system CAN flag is set to 1.
  */
 void CheckForFlags();
+
+void SendCAN(unsigned int Mbox);
 
 /**
  * Starts sending mailboxes that have been flagged in the mask

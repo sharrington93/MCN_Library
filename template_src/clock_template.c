@@ -5,7 +5,7 @@
  *      Author: Sean
  */
 
-#include "all.h"
+#include "template_all.h"
 
 struct CPUTIMER_VARS clock;
 struct CPUTIMER_VARS CPUTimer2;
@@ -85,6 +85,7 @@ void RestartCpuTimer2()
 void HeartBeat(int userFlags)
 {
 	FillHeartbeat(HEARTBEAT_BOX, userFlags);
+	SendCAN(HEARTBEAT_BOX);
 }
 
 

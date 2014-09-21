@@ -1,0 +1,9 @@
+
+*.obj
+*.pp
+*.mk
+makefile
+*.opt
+!boot_template.obj
+!SharedBoot_template.obj
+!DSP2803x_GlobalVariableDefs.obj

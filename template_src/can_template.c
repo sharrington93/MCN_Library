@@ -4,7 +4,7 @@
  *  Created on: May 17, 2014
  *      Author: Sean
  */
-#include "all.h"
+#include "template_all.h"
 
 
 struct ECAN_REGS *SystemShadow;
@@ -264,6 +264,15 @@ void CheckForFlags()
 		sys_ops.SystemFlags.bit.can_error = 0;
 	}
 	EDIS;
+}
+
+void SendCAN(unsigned int Mbox)
+{
+	CopyMCToShadow();
+	CheckBusOff();
+	CreateMask(Mbox);
+	BeginTransmission();
+	CheckForFlags();
 }
 
 void BeginTransmission()
