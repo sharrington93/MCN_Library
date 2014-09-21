@@ -4,7 +4,7 @@
  *  Created on: May 17, 2014
  *      Author: Sean
  */
-#include "all.h"
+#include "template_all.h"
 
 sys_ops_struct sys_ops;
 sys_data_struct sys_data;

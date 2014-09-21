@@ -5,7 +5,7 @@
  *      Author: Nathan
  */
 
-#include "all.h"
+#include "template_all.h"
 
 void ConfigLED0()
 {

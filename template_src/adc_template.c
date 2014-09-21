@@ -3,7 +3,7 @@
 
  */
 
-#include "all.h"
+#include "template_all.h"
 
 
 void adcinit()

@@ -5,7 +5,7 @@
  *      Author: Sean
  */
 
-#include "all.h"
+#include "template_all.h"
 
 
 sys_ops_struct ops_temp_sys, sc_start_ops;

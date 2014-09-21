@@ -4,7 +4,7 @@
  *  Created on: May 17, 2014
  *      Author: Sean
  */
-#include "all.h"
+#include "template_all.h"
 
 
 struct ECAN_REGS *SystemShadow;

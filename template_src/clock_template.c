@@ -5,7 +5,7 @@
  *      Author: Sean
  */
 
-#include "all.h"
+#include "template_all.h"
 
 struct CPUTIMER_VARS clock;
 struct CPUTIMER_VARS CPUTimer2;

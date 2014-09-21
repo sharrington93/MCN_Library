@@ -5,7 +5,7 @@
  *      Author: Sean
  */
 
-#include "all.h"
+#include "template_all.h"
 
 void SystemPowerDown()
 {

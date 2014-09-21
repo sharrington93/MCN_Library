@@ -4,7 +4,6 @@
  *  Created on: May 17, 2014
  *      Author: Sean
  */
-#include "all.h"
 #ifndef CAN_TEMPLATE_H_
 #define CAN_TEMPLATE_H_
 

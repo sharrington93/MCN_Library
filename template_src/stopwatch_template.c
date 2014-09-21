@@ -5,7 +5,7 @@
  *      Author: Nathan
  */
 
-#include "all.h"
+#include "template_all.h"
 #include "DSP2803x_CpuTimers.h"
 
 struct CPUTIMER_VARS StopWatch;
