@@ -43,7 +43,7 @@ void initDSPfilter(DSPfilter filter, int frequency);
 /**
  * Update DPS output variables.
  */
-void updateDSPfilter(DSPfilter filter);
+void updateDSPfilter(DSPfilter filter, int newValue);
 
 #define ACQPS_VALUE				20
 #define ADC_RATIO				10
@@ -62,6 +62,9 @@ void updateDSPfilter(DSPfilter filter);
 #define B5RESULT				B5filter.outputValue
 #define B6RESULT				B6filter.outputValue
 #define B7RESULT				B7filter.outputValue
+
+#define ONEK					1000
+#define TENK					10000
 
 
 #endif /* 12V_H_ */

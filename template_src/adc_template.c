@@ -10,6 +10,20 @@ void adcinit()
 {
 	InitAdc();  // Init the ADC
 
+	initDSPfilter(A0filter, ONEK);
+	initDSPfilter(A1filter, ONEK);
+	initDSPfilter(A2filter, ONEK);
+	initDSPfilter(A3filter, ONEK);
+	initDSPfilter(A4filter, ONEK);
+	initDSPfilter(A5filter, ONEK);
+	initDSPfilter(B0filter, ONEK);
+	initDSPfilter(B1filter, ONEK);
+	initDSPfilter(B2filter, ONEK);
+	initDSPfilter(B3filter, ONEK);
+	initDSPfilter(B4filter, ONEK);
+	initDSPfilter(B5filter, ONEK);
+	initDSPfilter(B6filter, ONEK);
+	initDSPfilter(B7filter, ONEK);
 
 	EALLOW;
 	// Comment out other unwanted lines.
@@ -75,5 +89,12 @@ void readADC()
 
     while(AdcRegs.ADCINTFLG.bit.ADCINT1 == 0){}  //Wait for ADCINT1
     AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
+}
+
+void initDSPfilter(DSPfilter filter, int frequency) {
+	filter->size = frequency;
+	filter->index = 0;
+	filter->outputValue = 0;
+	filter->previousValues = malloc(sizeof(int) * filter->size);
 }
 
