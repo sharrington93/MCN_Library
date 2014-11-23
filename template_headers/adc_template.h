@@ -13,7 +13,8 @@ void adcinit();
  */
 void readADC();
 
-typedef struct {
+typedef struct
+{
 	int size;
 	int index;
 	int outputValue;

@@ -88,13 +88,47 @@ void readADC()
 	AdcRegs.ADCSOCFRC1.all = 0xFFFF; 	//all socs
 
     while(AdcRegs.ADCINTFLG.bit.ADCINT1 == 0){}  //Wait for ADCINT1
+    updateDSPfilter(A0filter, AdcResult.ADCRESULT0);
+    updateDSPfilter(A1filter, AdcResult.ADCRESULT1);
+    updateDSPfilter(A2filter, AdcResult.ADCRESULT2);
+    updateDSPfilter(A3filter, AdcResult.ADCRESULT3);
+    updateDSPfilter(A4filter, AdcResult.ADCRESULT4);
+    updateDSPfilter(A5filter, AdcResult.ADCRESULT5);
+    updateDSPfilter(B0filter, AdcResult.ADCRESULT6);
+    updateDSPfilter(B1filter, AdcResult.ADCRESULT7);
+    updateDSPfilter(B2filter, AdcResult.ADCRESULT8);
+    updateDSPfilter(B3filter, AdcResult.ADCRESULT9);
+    updateDSPfilter(B4filter, AdcResult.ADCRESULT10);
+    updateDSPfilter(B5filter, AdcResult.ADCRESULT11);
+    updateDSPfilter(B6filter, AdcResult.ADCRESULT12);
+    updateDSPfilter(B7filter, AdcResult.ADCRESULT13);
     AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
 }
 
-void initDSPfilter(DSPfilter filter, int frequency) {
-	filter->size = frequency;
-	filter->index = 0;
-	filter->outputValue = 0;
-	filter->previousValues = malloc(sizeof(int) * filter->size);
+void initDSPfilter(DSPfilter filter, int frequency)
+{
+	filter.size = frequency;
+	filter.index = 0;
+	filter.outputValue = 0;
+	filter.previousValues = malloc(sizeof(int) * filter.size);
 }
 
+void updateDSPfilter(DSPfilter filter, int newValue)
+{
+	if (filter.index == filter.size) {
+		int average = 0;
+		int i = 0;
+		while (i < filter.size) {
+			average += filter.previousValues[i] / filter.size;
+			i++;
+		}
+		filter.outputValue = average;
+	} else if (filter.index < filter.size) {
+		filter.outputValue = newValue;
+	} else {
+		filter.outputValue = filter.outputValue + (newValue - filter.previousValues[filter.index - 1 % filter.size]) / filter.size;
+	}
+
+	filter.previousValues[filter.index % filter.size] = newValue;
+	filter.index++;
+}
