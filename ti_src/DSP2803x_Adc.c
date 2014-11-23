@@ -100,8 +100,10 @@ void AdcOffsetSelfCal()
     AdcRegs.ADCCTL1.bit.ADCREFSEL = 0;                  //Select internal reference mode
     AdcRegs.ADCCTL1.bit.VREFLOCONV = 1;                 //Select VREFLO internal connection on B5
     AdcChanSelect(13);                                  //Select channel B5 for all SOC
+
     AdcRegs.ADCOFFTRIM.bit.OFFTRIM = 80;                //Apply artificial offset (+80) to account for a negative offset that may reside in the ADC core
     AdcConvMean = AdcConversion();                      //Capture ADC conversion on VREFLO
+
     AdcRegs.ADCOFFTRIM.bit.OFFTRIM = 80 - AdcConvMean;  //Set offtrim register with new value (i.e remove artical offset (+80) and create a two's compliment of the offset error)
     AdcRegs.ADCCTL1.bit.VREFLOCONV = 0;                 //Select external ADCIN5 input pin on B5
     EDIS;
