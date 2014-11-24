@@ -126,7 +126,7 @@ void updateDSPfilter(DSPfilter filter, int newValue)
 	} else if (filter.index < filter.size) {
 		filter.outputValue = newValue;
 	} else {
-		filter.outputValue = filter.outputValue + (newValue - filter.previousValues[filter.index - 1 % filter.size]) / filter.size;
+		filter.outputValue = filter.outputValue + (newValue - filter.previousValues[filter.index % filter.size]) / filter.size;
 	}
 
 	filter.previousValues[filter.index % filter.size] = newValue;
