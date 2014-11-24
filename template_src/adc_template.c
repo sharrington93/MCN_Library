@@ -90,8 +90,8 @@ void adcinit()
 	EPwm2Regs.ETSEL.bit.SOCAEN	= 1;		// Enable SOC on A group
 	EPwm2Regs.ETSEL.bit.SOCASEL	= 4;		// Select SOC from CPMA on upcount
 	EPwm2Regs.ETPS.bit.SOCAPRD 	= 1;		// Generate pulse on 1st event
-	EPwm2Regs.CMPA.half.CMPA 	= 0x752E;	// Set compare A value
-	EPwm2Regs.TBPRD 			= 0x752F;	// Set period for ePWM2
+	EPwm2Regs.CMPA.half.CMPA 	= 0x0BB7;	// Set compare A value
+	EPwm2Regs.TBPRD 			= 0x0BB7;	// Set period for ePWM2
 	EPwm2Regs.TBCTL.bit.CTRMODE	= 0;		// count up and start
 
 }
