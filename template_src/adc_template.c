@@ -115,7 +115,10 @@ void initDSPfilter(DSPfilter filter, int frequency)
 
 void updateDSPfilter(DSPfilter filter, int newValue)
 {
-	if (filter.index == filter.size) {
+	// The filter only averages the ADC values once
+	if (filter.index < filter.size) {
+			filter.outputValue = newValue;
+	} else if (filter.index == filter.size) {
 		int average = 0;
 		int i = 0;
 		while (i < filter.size) {
@@ -123,8 +126,6 @@ void updateDSPfilter(DSPfilter filter, int newValue)
 			i++;
 		}
 		filter.outputValue = average;
-	} else if (filter.index < filter.size) {
-		filter.outputValue = newValue;
 	} else {
 		filter.outputValue = filter.outputValue + (newValue - filter.previousValues[filter.index % filter.size]) / filter.size;
 	}
