@@ -1,8 +1,3 @@
-/*
-
-
- */
-
 #include "template_all.h"
 
 
@@ -10,8 +5,8 @@ void adcinit()
 {
 	InitAdc();  // Init the ADC
 
-
 	EALLOW;
+
 	// Comment out other unwanted lines.
 	GpioCtrlRegs.AIODIR.all = 0x0000;
 
@@ -66,7 +61,6 @@ void adcinit()
 	AdcRegs.ADCCTL1.bit.INTPULSEPOS = 1; //ADCINT1 trips after AdcResults latch
 	AdcRegs.INTSEL1N2.bit.INT1E  =  1; //Enable ADCINT1
 	AdcRegs.INTSEL1N2.bit.INT1CONT = 0; //Disable ADCINT1 Continuous mode
-	AdcRegs.INTSEL1N2.bit.INT1SEL	= 15;	//setup EOC15 to trigger ADCINT1 to fire
 	AdcRegs.ADCSOC0CTL.bit.TRIGSEL 	= 7;	//set SOC0  start trigger on EPWM2A, due to round-robin SOC0 converts first then SOC1, then SOC2, etc...
 	AdcRegs.ADCSOC1CTL.bit.TRIGSEL 	= 7;	//set SOC1  start trigger on EPWM2A, due to round-robin SOC0 converts first then SOC1, then SOC2, etc...
 	AdcRegs.ADCSOC2CTL.bit.TRIGSEL 	= 7;	//set SOC2  start trigger on EPWM2A, due to round-robin SOC0 converts first then SOC1, then SOC2, etc...
@@ -84,7 +78,9 @@ void adcinit()
 	AdcRegs.ADCSOC14CTL.bit.TRIGSEL = 7;	//set SOC14 start trigger on EPWM2A, due to round-robin SOC0 converts first then SOC1, then SOC2, etc...
 	AdcRegs.ADCSOC15CTL.bit.TRIGSEL = 7;	//set SOC15 start trigger on EPWM2A, due to round-robin SOC0 converts first then SOC1, then SOC2, etc...
 
-	EDIS;
+	AdcRegs.ADCCTL1.bit.ADCREFSEL = 0;      //Select internal reference mode
+	AdcRegs.ADCCTL1.bit.VREFLOCONV = 1;     //Select VREFLO internal connection on B5
+    AdcRegs.ADCOFFTRIM.bit.OFFTRIM = 80;    //Apply artificial offset (+80) to account for a negative offset that may reside in the ADC core
 
 	// Assumes ePWM2 clock is already enabled in InitSysCtrl();
 	EPwm2Regs.ETSEL.bit.SOCAEN	= 1;		// Enable SOC on A group
@@ -93,6 +89,8 @@ void adcinit()
 	EPwm2Regs.CMPA.half.CMPA 	= 0x752E;	// Set compare A value
 	EPwm2Regs.TBPRD 			= 0x752F;	// Set period for ePWM2
 	EPwm2Regs.TBCTL.bit.CTRMODE	= 0;		// count up and start
+
+	EDIS;
 
 }
 /*
@@ -108,10 +106,11 @@ void readADC()
 // INT1.1
 __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when enabled)
 {
-  // Insert ISR Code here
+	// Insert ISR Code here
+	AdcRegs.ADCOFFTRIM.bit.OFFTRIM = AdcRegs.ADCOFFTRIM.bit.OFFTRIM - B5RESULT;  //Set offtrim register with new value (i.e remove artical offset (+80) and create a two's compliment of the offset error)
 
-  // To receive more interrupts from this PIE group, acknowledge this interrupt
-  PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
-  AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
+	// To receive more interrupts from this PIE group, acknowledge this interrupt
+	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+	AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
 
 }
