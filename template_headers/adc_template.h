@@ -8,10 +8,6 @@
  */
 void adcinit();
 
-/**
- * Reads ADC output until the ADC interrupt triggers.
- */
-void readADC();
 
 #define ACQPS_VALUE				20
 #define ADC_RATIO				10

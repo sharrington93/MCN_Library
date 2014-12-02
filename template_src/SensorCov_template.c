@@ -23,8 +23,8 @@ void SystemSensorInit(unsigned int time)
 	ConfigLED0();
 	//led 1
 	ConfigLED1();
-	//CONFIG 12V SWITCH
-	Config12V();
+	//CONFIG 12V SWITCH. NO LONGER USED IN MCN V2.0
+	//Config12V();
 	conv_watch_in_sys = StartStopWatch(time);
 }
 
@@ -33,7 +33,7 @@ void SystemSensorDeInit()
 	StopStopWatch(conv_watch_in_sys);
 	CLEARLED0();
 	CLEARLED1();
-	CLEAR12V();
+	//CLEAR12V();
 }
 
 void LatchSystemStruct()
@@ -60,6 +60,8 @@ void PerformSystemChecks()
 		ops_temp_sys.SystemFlags.bit.cov_error = 0;
 	}
 
+	/*
+	 * No longer used in MCN v2.0 because 12V button no longer exists
 	if (ops_temp_sys.SystemFlags.all != 0)
 	{
 		SET12V();
@@ -68,6 +70,7 @@ void PerformSystemChecks()
 	{
 		CLEAR12V();
 	}
+	*/
 }
 
 void SaveOpStates()
