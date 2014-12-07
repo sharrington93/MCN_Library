@@ -8,10 +8,6 @@
  */
 void adcinit();
 
-/**
- * Reads ADC output until the ADC interrupt triggers.
- */
-void readADC();
 
 typedef struct
 {

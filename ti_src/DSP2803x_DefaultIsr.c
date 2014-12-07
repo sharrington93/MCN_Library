@@ -204,6 +204,7 @@ __interrupt void USER12_ISR(void)     // User Defined trap 12
 // PIE Group 1 - MUXed into CPU INT1
 // -----------------------------------------------------------
 // INT1.1
+/*
 __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when enabled)
 {
   // Insert ISR Code here
@@ -218,6 +219,7 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
   for(;;);
 
 }
+*/
 
 // INT1.2
 __interrupt void ADCINT2_ISR(void)  // ADC  (Can also be ISR for INT10.2 when enabled)
@@ -237,7 +239,18 @@ __interrupt void ADCINT2_ISR(void)  // ADC  (Can also be ISR for INT10.2 when en
 }
 
 // INT1.3 - Reserved
+__interrupt void XINT1_ISR(void)
+{
+  // Insert ISR Code here
 
+  // To receive more interrupts from this PIE group, acknowledge this interrupt
+  // PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+
+  // Next two lines for debug only to halt the processor here
+  // Remove after inserting ISR Code
+  __asm ("      ESTOP0");
+  for(;;);
+}
 
 // INT1.5
 __interrupt void  XINT2_ISR(void)
