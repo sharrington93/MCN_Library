@@ -17,30 +17,16 @@ typedef struct
 	int *previousValues;
 } DSPfilter;
 
-DSPfilter A0filter;
-DSPfilter A1filter;
-DSPfilter A2filter;
-DSPfilter A3filter;
-DSPfilter A4filter;
-DSPfilter A5filter;
-DSPfilter B0filter;
-DSPfilter B1filter;
-DSPfilter B2filter;
-DSPfilter B3filter;
-DSPfilter B4filter;
-DSPfilter B5filter;
-DSPfilter B6filter;
-DSPfilter B7filter;
 
 /**
  * DSP filter initialization.
  */
-void initDSPfilter(DSPfilter filter, int frequency);
+void initDSPfilter(DSPfilter filter, unsigned int frequency);
 
 /**
  * Update DPS output variables.
  */
-void updateDSPfilter(DSPfilter filter, int newValue);
+void updateDSPfilter(DSPfilter filter, unsigned int newValue);
 
 #define ACQPS_VALUE				20
 #define ADC_RATIO				10

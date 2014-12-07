@@ -1,11 +1,25 @@
 #include "template_all.h"
 
+int datatest[] = {1, 5, 7, 2, 6, 7, 8, 2, 2, 7, 8, 3, 7, 3, 7, 3, 15, 6};
+
+DSPfilter A0filter;
+DSPfilter A1filter;
+DSPfilter A2filter;
+DSPfilter A3filter;
+DSPfilter A4filter;
+DSPfilter A5filter;
+DSPfilter B0filter;
+DSPfilter B1filter;
+DSPfilter B2filter;
+DSPfilter B3filter;
+DSPfilter B4filter;
+DSPfilter B5filter;
+DSPfilter B6filter;
+DSPfilter B7filter;
 
 void adcinit()
 {
-	InitAdc();  // Init the ADC
-
-	initDSPfilter(A0filter, ONEK);
+	initDSPfilter(A0filter, 3);
 	initDSPfilter(A1filter, ONEK);
 	initDSPfilter(A2filter, ONEK);
 	initDSPfilter(A3filter, ONEK);
@@ -19,6 +33,8 @@ void adcinit()
 	initDSPfilter(B5filter, ONEK);
 	initDSPfilter(B6filter, ONEK);
 	initDSPfilter(B7filter, ONEK);
+
+	InitAdc();  // Init the ADC
 
 	EALLOW;
 
@@ -105,8 +121,9 @@ void adcinit()
 	EPwm2Regs.TBPRD 			= 0x0BB7;	// Set period for ePWM2
 	EPwm2Regs.TBCTL.bit.CTRMODE	= 0;		// count up and start
 
+	PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
+	IER |= M_INT1;
 	EDIS;
-
 }
 /*
 void readADC()
@@ -133,7 +150,7 @@ void readADC()
 */
 
 
-void initDSPfilter(DSPfilter filter, int frequency)
+void initDSPfilter(DSPfilter filter, unsigned int frequency)
 {
 	filter.size = frequency;
 	filter.index = 0;
@@ -141,7 +158,7 @@ void initDSPfilter(DSPfilter filter, int frequency)
 	filter.previousValues = malloc(sizeof(int) * filter.size);
 }
 
-void updateDSPfilter(DSPfilter filter, int newValue)
+void updateDSPfilter(DSPfilter filter, unsigned int newValue)
 {
 	// The filter only averages the ADC values once
 	if (filter.index < filter.size) {
@@ -173,7 +190,8 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 	AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
 
 	// Update DSP filters
-    updateDSPfilter(A0filter, AdcResult.ADCRESULT0);
+    // updateDSPfilter(A0filter, AdcResult.ADCRESULT0);
+    updateDSPfilter(A0filter, datatest[A0filter.index]);
     updateDSPfilter(A1filter, AdcResult.ADCRESULT1);
     updateDSPfilter(A2filter, AdcResult.ADCRESULT2);
     updateDSPfilter(A3filter, AdcResult.ADCRESULT3);
