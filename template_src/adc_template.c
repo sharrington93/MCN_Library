@@ -145,7 +145,7 @@ void updateDSPfilter(DSPfilter filter, int newValue)
 {
 	// The filter only averages the ADC values once
 	if (filter.index < filter.size) {
-			filter.outputValue = newValue;
+		filter.outputValue = newValue;
 	} else if (filter.index == filter.size) {
 		int average = 0;
 		int i = 0;

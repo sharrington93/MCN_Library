@@ -11,8 +11,8 @@ void adcinit();
 
 typedef struct
 {
-	int size;
-	int index;
+	unsigned int size;
+	unsigned int index;
 	int outputValue;
 	int *previousValues;
 } DSPfilter;
