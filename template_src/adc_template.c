@@ -17,6 +17,7 @@ DSPfilter B5filter;
 DSPfilter B6filter;
 DSPfilter B7filter;
 
+
 void adcinit()
 {
 	initDSPfilter(A0filter, 3);
@@ -92,6 +93,7 @@ void adcinit()
 	AdcRegs.ADCCTL1.bit.INTPULSEPOS = 1; //ADCINT1 trips after AdcResults latch
 	AdcRegs.INTSEL1N2.bit.INT1E  =  1; //Enable ADCINT1
 	AdcRegs.INTSEL1N2.bit.INT1CONT = 0; //Disable ADCINT1 Continuous mode
+
 	AdcRegs.ADCSOC0CTL.bit.TRIGSEL 	= 7;	//set SOC0  start trigger on EPWM2A, due to round-robin SOC0 converts first then SOC1, then SOC2, etc...
 	AdcRegs.ADCSOC1CTL.bit.TRIGSEL 	= 7;	//set SOC1  start trigger on EPWM2A, due to round-robin SOC0 converts first then SOC1, then SOC2, etc...
 	AdcRegs.ADCSOC2CTL.bit.TRIGSEL 	= 7;	//set SOC2  start trigger on EPWM2A, due to round-robin SOC0 converts first then SOC1, then SOC2, etc...
@@ -120,6 +122,7 @@ void adcinit()
 	EPwm2Regs.CMPA.half.CMPA 	= 0x0BB7;	// Set compare A value
 	EPwm2Regs.TBPRD 			= 0x0BB7;	// Set period for ePWM2
 	EPwm2Regs.TBCTL.bit.CTRMODE	= 0;		// count up and start
+	//EPwm1Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;
 
 	PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
 	IER |= M_INT1;
@@ -183,12 +186,14 @@ void updateDSPfilter(DSPfilter filter, unsigned int newValue)
 __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when enabled)
 {
 	// Insert ISR Code here
-	AdcRegs.ADCOFFTRIM.bit.OFFTRIM = AdcRegs.ADCOFFTRIM.bit.OFFTRIM - B5RESULT;  //Set offtrim register with new value (i.e remove artical offset (+80) and create a two's compliment of the offset error)
-
+	EALLOW;
+	AdcRegs.ADCOFFTRIM.bit.OFFTRIM = AdcRegs.ADCOFFTRIM.bit.OFFTRIM - AdcResult.ADCRESULT13;  //Set offtrim register with new value (i.e remove artical offset (+80) and create a two's compliment of the offset error)
+	EDIS;
 	// To receive more interrupts from this PIE group, acknowledge this interrupt
 	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 	AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
 
+	/*
 	// Update DSP filters
     // updateDSPfilter(A0filter, AdcResult.ADCRESULT0);
     updateDSPfilter(A0filter, datatest[A0filter.index]);
@@ -205,4 +210,5 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
     updateDSPfilter(B5filter, AdcResult.ADCRESULT11);
     updateDSPfilter(B6filter, AdcResult.ADCRESULT12);
     updateDSPfilter(B7filter, AdcResult.ADCRESULT13);
+    */
 }
