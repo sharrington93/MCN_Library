@@ -13,8 +13,8 @@ typedef struct
 {
 	unsigned int size;
 	unsigned int index;
-	int outputValue;
-	int *previousValues;
+	unsigned int outputValue;
+	unsigned int *previousValues;
 } DSPfilter;
 
 

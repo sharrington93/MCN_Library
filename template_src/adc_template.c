@@ -164,13 +164,12 @@ void updateDSPfilter(DSPfilter filter, unsigned int newValue)
 	if (filter.index < filter.size) {
 		filter.outputValue = newValue;
 	} else if (filter.index == filter.size) {
-		int average = 0;
-		int i = 0;
-		while (i < filter.size) {
-			average += filter.previousValues[i] / filter.size;
-			i++;
+		unsigned int sum = 0;
+		int i;
+		for (i = 0; i < filter.size; i++) {
+			sum += filter.previousValues[i];
 		}
-		filter.outputValue = average;
+		filter.outputValue = sum / filter.size;
 	} else {
 		filter.outputValue = filter.outputValue + (newValue - filter.previousValues[filter.index % filter.size]) / filter.size;
 	}
