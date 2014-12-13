@@ -7,21 +7,6 @@
 
 #include "template_all.h"
 
-extern DSPfilter A0filter;
-extern DSPfilter A1filter;
-extern DSPfilter A2filter;
-extern DSPfilter A3filter;
-extern DSPfilter A4filter;
-extern DSPfilter A5filter;
-extern DSPfilter B0filter;
-extern DSPfilter B1filter;
-extern DSPfilter B2filter;
-extern DSPfilter B3filter;
-extern DSPfilter B4filter;
-extern DSPfilter B5filter;
-extern DSPfilter B6filter;
-extern DSPfilter B7filter;
-
 void SystemPowerDown()
 {
 	while(isPowerOn() == 0) {}
