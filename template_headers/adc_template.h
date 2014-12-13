@@ -12,21 +12,21 @@ void adcinit();
 typedef struct
 {
 	unsigned int size;
-	unsigned int index;
-	unsigned int outputValue;
-	unsigned int *previousValues;
+	long unsigned int index;
+	int outputValue;
+	int *previousValues;
 } DSPfilter;
 
 
 /**
  * DSP filter initialization.
  */
-void initDSPfilter(DSPfilter filter, unsigned int frequency);
+void initDSPfilter(DSPfilter *filter, unsigned frequency);
 
 /**
  * Update DPS output variables.
  */
-void updateDSPfilter(DSPfilter filter, unsigned int newValue);
+void updateDSPfilter(DSPfilter *filter, unsigned int newValue);
 
 #define ACQPS_VALUE				20
 #define ADC_RATIO				10
@@ -46,7 +46,7 @@ void updateDSPfilter(DSPfilter filter, unsigned int newValue);
 #define B6RESULT				B6filter.outputValue
 #define B7RESULT				B7filter.outputValue
 
-#define ONEK					1000
+#define ONEK					100
 #define TENK					10000
 
 

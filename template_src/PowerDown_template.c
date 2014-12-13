@@ -32,20 +32,20 @@ void SystemPowerDown()
 	EDIS;
 
 	// Free memory allocated for DSP filters
-	free(A0filter.previousValues);
-	free(A1filter.previousValues);
-	free(A2filter.previousValues);
-	free(A3filter.previousValues);
-	free(A4filter.previousValues);
-	free(A5filter.previousValues);
-	free(B0filter.previousValues);
-	free(B1filter.previousValues);
-	free(B2filter.previousValues);
-	free(B3filter.previousValues);
-	free(B4filter.previousValues);
-	free(B5filter.previousValues);
-	free(B6filter.previousValues);
-	free(B7filter.previousValues);
+	myFree(A0filter.previousValues);
+	myFree(A1filter.previousValues);
+	myFree(A2filter.previousValues);
+	myFree(A3filter.previousValues);
+	myFree(A4filter.previousValues);
+	myFree(A5filter.previousValues);
+	myFree(B0filter.previousValues);
+	myFree(B1filter.previousValues);
+	myFree(B2filter.previousValues);
+	myFree(B3filter.previousValues);
+	myFree(B4filter.previousValues);
+	myFree(B5filter.previousValues);
+	myFree(B6filter.previousValues);
+	myFree(B7filter.previousValues);
 
 	while(1){}
 }
