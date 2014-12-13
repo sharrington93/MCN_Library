@@ -16,22 +16,6 @@ void SystemPowerDown()
 	SysCtrlRegs.WDKEY = 0x00;
 	EDIS;
 
-	// Free memory allocated for DSP filters
-	myFree(A0filter.previousValues);
-	myFree(A1filter.previousValues);
-	myFree(A2filter.previousValues);
-	myFree(A3filter.previousValues);
-	myFree(A4filter.previousValues);
-	myFree(A5filter.previousValues);
-	myFree(B0filter.previousValues);
-	myFree(B1filter.previousValues);
-	myFree(B2filter.previousValues);
-	myFree(B3filter.previousValues);
-	myFree(B4filter.previousValues);
-	myFree(B5filter.previousValues);
-	myFree(B6filter.previousValues);
-	myFree(B7filter.previousValues);
-
 	while(1){}
 }
 
