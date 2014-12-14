@@ -30,14 +30,14 @@ void SystemCANInit(struct ECAN_REGS *UserShadow);
  *
  * IMPORTANT: DO NOT REASSIGN MAILBOX 0
  */
-void CommandBoxInit();
+void CommandBoxInit(Uint16 command_id);
 
 /**
  * Initializes the heartbeat CAN mailbox as mailbox 1
  *
  * IMPORTANT: DO NOT REASSIGN MAILBOX 1
  */
-void HeartbeatBoxInit();
+void HeartbeatBoxInit(Uint16 heartbeat_id);
 
 /**
  * Finishes initializing the CAN interface. Should be called once all mailboxes
@@ -142,7 +142,6 @@ int InsertCANMessage(int Mbox, unsigned int MDH, unsigned int MDL);
 
 #define COMMAND_BOX 	0
 #define HEARTBEAT_BOX 	1
-#define COMMAND_ID 		0x1
-#define HEARTBEAT_ID 	0x0
+
 
 #endif /* CAN_TEMPLATE_H_ */

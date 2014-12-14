@@ -31,7 +31,7 @@ void SystemCANInit(struct ECAN_REGS *UserShadow)
 	EDIS;
 }
 
-void CommandBoxInit()
+void CommandBoxInit(Uint16 command_id)
 {
 	EALLOW;
 	//Command RECEIVE
@@ -39,7 +39,7 @@ void CommandBoxInit()
 	ECanaMboxes.MBOX0.MSGID.bit.AME = 0;	// all bit must match
 	ECanaMboxes.MBOX0.MSGID.bit.AAM = 0; 	// no RTR AUTO TRANSMIT
 	ECanaMboxes.MBOX0.MSGCTRL.bit.DLC = 8;
-	ECanaMboxes.MBOX0.MSGID.bit.STDMSGID = COMMAND_ID;
+	ECanaMboxes.MBOX0.MSGID.bit.STDMSGID = command_id;
 	SystemShadow->CANMD.bit.MD0 = 1;			//receive
 	SystemShadow->CANME.bit.ME0 = 1;			//enable
 	SystemShadow->CANMIM.bit.MIM0  = 1; 		//int enable
@@ -47,7 +47,7 @@ void CommandBoxInit()
 	EDIS;
 }
 
-void HeartbeatBoxInit()
+void HeartbeatBoxInit(Uint16 heartbeat_id)
 {
 	EALLOW;
 	//Heart TRANSMIT
@@ -55,7 +55,7 @@ void HeartbeatBoxInit()
 	ECanaMboxes.MBOX1.MSGID.bit.AME = 0; 	// all bit must match
 	ECanaMboxes.MBOX1.MSGID.bit.AAM = 1; 	//RTR AUTO TRANSMIT
 	ECanaMboxes.MBOX1.MSGCTRL.bit.DLC = 8;
-	ECanaMboxes.MBOX1.MSGID.bit.STDMSGID = HEARTBEAT_ID;
+	ECanaMboxes.MBOX1.MSGID.bit.STDMSGID = heartbeat_id;
 	SystemShadow->CANMD.bit.MD1 = 0; 			//transmit
 	SystemShadow->CANME.bit.ME1 = 1;			//enable
 	EDIS;
