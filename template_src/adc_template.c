@@ -21,7 +21,7 @@ DSPfilter B7filter;
 
 void adcinit()
 {
-	initDSPfilter(&A0filter, ONEK, TENK);
+	initDSPfilter(&A0filter, 1, TENK);
 	initDSPfilter(&A1filter, ONEK, TENK);
 	initDSPfilter(&A2filter, ONEK, TENK);
 	initDSPfilter(&A3filter, ONEK, TENK);
@@ -154,7 +154,7 @@ void readADC()
 */
 
 
-void initDSPfilter(DSPfilter *filter, unsigned CANFrequency, unsigned samplingFrequency)
+void initDSPfilter(DSPfilter *filter, float CANFrequency, float samplingFrequency)
 {
 	filter->alpha = 1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency));
 	filter->outputValue = 0;
@@ -166,7 +166,7 @@ void updateDSPfilter(DSPfilter *filter, unsigned newValue)
 	if (!filter->isOn) {
 		filter->outputValue = newValue;
 	} else {
-		filter->outputValue = filter->alpha * newValue + (1.0 - filter->alpha) * filter->outputValue;
+		filter->outputValue = filter->alpha * (float)newValue + (1.0 - filter->alpha) * (float)filter->outputValue;
 	}
 }
 
@@ -181,7 +181,7 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 	AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
 
-	/*
+
 	// Update DSP filters
     updateDSPfilter(&A0filter, AdcResult.ADCRESULT0);
     //updateDSPfilter(A0filter, datatest[A0filter.index]);
@@ -198,5 +198,5 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
     updateDSPfilter(&B5filter, AdcResult.ADCRESULT11);
     updateDSPfilter(&B6filter, AdcResult.ADCRESULT12);
     updateDSPfilter(&B7filter, AdcResult.ADCRESULT13);
-    */
+
 }

@@ -12,7 +12,7 @@ void adcinit();
 typedef struct
 {
 	double alpha;
-	int outputValue;
+	float outputValue;
 	char isOn;
 } DSPfilter;
 
@@ -20,7 +20,7 @@ typedef struct
 /**
  * DSP filter initialization.
  */
-void initDSPfilter(DSPfilter *filter, unsigned CANFrequency, unsigned samplingFrequency);
+void initDSPfilter(DSPfilter *filter, float CANFrequency, float samplingFrequency);
 
 /**
  * Update DPS output variables.
@@ -45,8 +45,8 @@ void updateDSPfilter(DSPfilter *filter, unsigned newValue);
 #define B6RESULT				B6filter.outputValue
 #define B7RESULT				B7filter.outputValue
 
-#define ONEK					1000
-#define TENK					10000
+#define ONEK					1000.0
+#define TENK					10000.0
 
 #define PI						3.14159265358979323846
 
