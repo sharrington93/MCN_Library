@@ -238,34 +238,6 @@ __interrupt void ADCINT2_ISR(void)  // ADC  (Can also be ISR for INT10.2 when en
 
 }
 
-// INT1.3 - Reserved
-__interrupt void XINT1_ISR(void)
-{
-  // Insert ISR Code here
-
-  // To receive more interrupts from this PIE group, acknowledge this interrupt
-  // PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
-
-  // Next two lines for debug only to halt the processor here
-  // Remove after inserting ISR Code
-  __asm ("      ESTOP0");
-  for(;;);
-}
-
-// INT1.5
-__interrupt void  XINT2_ISR(void)
-{
-  // Insert ISR Code here
-
-  // To receive more interrupts from this PIE group, acknowledge this interrupt
-  // PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
-
-  // Next two lines for debug only to halt the processor here
-  // Remove after inserting ISR Code
-  __asm ("      ESTOP0");
-  for(;;);
-
-}
 
 // INT1.6
 __interrupt void  ADCINT9_ISR(void)     // ADC
