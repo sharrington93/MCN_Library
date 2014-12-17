@@ -1,4 +1,5 @@
 #include "template_all.h"
+#include <math.h>
 
 int datatest[] = {1, 5, 7, 2, 6, 7, 8, 2, 2, 7, 8, 3, 7, 3, 7, 3, 15, 6};
 
@@ -20,20 +21,20 @@ DSPfilter B7filter;
 
 void adcinit()
 {
-	initDSPfilter(A0filter, 3);
-	initDSPfilter(A1filter, ONEK);
-	initDSPfilter(A2filter, ONEK);
-	initDSPfilter(A3filter, ONEK);
-	initDSPfilter(A4filter, ONEK);
-	initDSPfilter(A5filter, ONEK);
-	initDSPfilter(B0filter, ONEK);
-	initDSPfilter(B1filter, ONEK);
-	initDSPfilter(B2filter, ONEK);
-	initDSPfilter(B3filter, ONEK);
-	initDSPfilter(B4filter, ONEK);
-	initDSPfilter(B5filter, ONEK);
-	initDSPfilter(B6filter, ONEK);
-	initDSPfilter(B7filter, ONEK);
+	initDSPfilter(&A0filter, 1, TENK);
+	initDSPfilter(&A1filter, ONEK, TENK);
+	initDSPfilter(&A2filter, ONEK, TENK);
+	initDSPfilter(&A3filter, ONEK, TENK);
+	initDSPfilter(&A4filter, ONEK, TENK);
+	initDSPfilter(&A5filter, ONEK, TENK);
+	initDSPfilter(&B0filter, ONEK, TENK);
+	initDSPfilter(&B1filter, ONEK, TENK);
+	initDSPfilter(&B2filter, ONEK, TENK);
+	initDSPfilter(&B3filter, ONEK, TENK);
+	initDSPfilter(&B4filter, ONEK, TENK);
+	initDSPfilter(&B5filter, ONEK, TENK);
+	initDSPfilter(&B6filter, ONEK, TENK);
+	initDSPfilter(&B7filter, ONEK, TENK);
 
 	InitAdc();  // Init the ADC
 
@@ -153,33 +154,20 @@ void readADC()
 */
 
 
-void initDSPfilter(DSPfilter filter, unsigned int frequency)
+void initDSPfilter(DSPfilter *filter, float CANFrequency, float samplingFrequency)
 {
-	filter.size = frequency;
-	filter.index = 0;
-	filter.outputValue = 0;
-	filter.previousValues = malloc(sizeof(int) * filter.size);
+	filter->alpha = 1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency));
+	filter->outputValue = 0;
+	filter->isOn = 0;
 }
 
-void updateDSPfilter(DSPfilter filter, unsigned int newValue)
+void updateDSPfilter(DSPfilter *filter, unsigned newValue)
 {
-	// The filter only averages the ADC values once
-	if (filter.index < filter.size) {
-		filter.outputValue = newValue;
-	} else if (filter.index == filter.size) {
-		int average = 0;
-		int i = 0;
-		while (i < filter.size) {
-			average += filter.previousValues[i] / filter.size;
-			i++;
-		}
-		filter.outputValue = average;
+	if (!filter->isOn) {
+		filter->outputValue = newValue;
 	} else {
-		filter.outputValue = filter.outputValue + (newValue - filter.previousValues[filter.index % filter.size]) / filter.size;
+		filter->outputValue = filter->alpha * (float)newValue + (1.0 - filter->alpha) * (float)filter->outputValue;
 	}
-
-	filter.previousValues[filter.index % filter.size] = newValue;
-	filter.index++;
 }
 
 // INT1.1
@@ -193,22 +181,22 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 	AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
 
-	/*
+
 	// Update DSP filters
-    // updateDSPfilter(A0filter, AdcResult.ADCRESULT0);
-    updateDSPfilter(A0filter, datatest[A0filter.index]);
-    updateDSPfilter(A1filter, AdcResult.ADCRESULT1);
-    updateDSPfilter(A2filter, AdcResult.ADCRESULT2);
-    updateDSPfilter(A3filter, AdcResult.ADCRESULT3);
-    updateDSPfilter(A4filter, AdcResult.ADCRESULT4);
-    updateDSPfilter(A5filter, AdcResult.ADCRESULT5);
-    updateDSPfilter(B0filter, AdcResult.ADCRESULT6);
-    updateDSPfilter(B1filter, AdcResult.ADCRESULT7);
-    updateDSPfilter(B2filter, AdcResult.ADCRESULT8);
-    updateDSPfilter(B3filter, AdcResult.ADCRESULT9);
-    updateDSPfilter(B4filter, AdcResult.ADCRESULT10);
-    updateDSPfilter(B5filter, AdcResult.ADCRESULT11);
-    updateDSPfilter(B6filter, AdcResult.ADCRESULT12);
-    updateDSPfilter(B7filter, AdcResult.ADCRESULT13);
-    */
+    updateDSPfilter(&A0filter, AdcResult.ADCRESULT0);
+    //updateDSPfilter(A0filter, datatest[A0filter.index]);
+    updateDSPfilter(&A1filter, AdcResult.ADCRESULT1);
+    updateDSPfilter(&A2filter, AdcResult.ADCRESULT2);
+    updateDSPfilter(&A3filter, AdcResult.ADCRESULT3);
+    updateDSPfilter(&A4filter, AdcResult.ADCRESULT4);
+    updateDSPfilter(&A5filter, AdcResult.ADCRESULT5);
+    updateDSPfilter(&B0filter, AdcResult.ADCRESULT6);
+    updateDSPfilter(&B1filter, AdcResult.ADCRESULT7);
+    updateDSPfilter(&B2filter, AdcResult.ADCRESULT8);
+    updateDSPfilter(&B3filter, AdcResult.ADCRESULT9);
+    updateDSPfilter(&B4filter, AdcResult.ADCRESULT10);
+    updateDSPfilter(&B5filter, AdcResult.ADCRESULT11);
+    updateDSPfilter(&B6filter, AdcResult.ADCRESULT12);
+    updateDSPfilter(&B7filter, AdcResult.ADCRESULT13);
+
 }
