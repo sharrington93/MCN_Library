@@ -12,7 +12,7 @@ DSPfilter GPIO26filter;
 
 float GPIO19_PERIOD, GPIO26_PERIOD;
 unsigned int GPIO19_COUNTER, GPIO26_COUNTER;
-stopwatch_struct* GPIO19_watch, GPIO26_watch;
+stopwatch_struct* GPIO19_watch, *GPIO26_watch;
 
 void ConfigLED0()
 {
@@ -74,12 +74,11 @@ void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint
 		GpioCtrlRegs.GPAPUD.bit.GPIO19 = GPAPUD;		//enable pull up
 
 		//Setup interrupt
-		IER |= M_INT35;
 		PieCtrlRegs.PIEIER1.bit.INTx4 = 1;
-		GpioIntRegs.GPIOXINT1SEL = 19;
+		GpioIntRegs.GPIOXINT1SEL.bit.GPIOSEL = 19;
 		XIntruptRegs.XINT1CR.bit.POLARITY = xint_polarity;
 		XIntruptRegs.XINT1CR.bit.ENABLE = 1;
-		initDSPfilter(GPIO19filter, ONEK, TENK);
+		initDSPfilter(&GPIO19filter, ONEK, TENK);
 
 		GPIO19_COUNTER = 0;
 		GPIO19_PERIOD = 1.0/Sample_Frequency;
@@ -93,12 +92,11 @@ void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint
 		GpioCtrlRegs.GPAPUD.bit.GPIO26 = GPAPUD;
 
 		//Setup interrupt
-		IER |= M_INT36;
 		PieCtrlRegs.PIEIER1.bit.INTx5 = 1;
-		GpioIntRegs.GPIOXINT2SEL = 26;
+		GpioIntRegs.GPIOXINT2SEL.bit.GPIOSEL = 26;
 		XIntruptRegs.XINT2CR.bit.POLARITY = xint_polarity;
 		XIntruptRegs.XINT2CR.bit.ENABLE = 1;
-		initDSPfilter(GPIO26filter, ONEK, TENK);
+		initDSPfilter(&GPIO26filter, CAN_Frequency, Sample_Frequency);
 
 		GPIO26_COUNTER = 0;
 		GPIO26_PERIOD = 1.0/Sample_Frequency;
@@ -119,7 +117,12 @@ __interrupt void XINT1_ISR(void)
 	// Insert ISR Code here
 	if (isStopWatchComplete(GPIO19_watch) == 1)
 	{
-
+		updateDSPfilter(&GPIO19filter, (GPIO19_COUNTER/GPIO19_PERIOD));
+		StopWatchRestart(GPIO19_watch);
+	}
+	else
+	{
+		GPIO19_COUNTER++;
 	}
 	// To receive more interrupts from this PIE group, acknowledge this interrupt
 	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
@@ -132,8 +135,8 @@ __interrupt void  XINT2_ISR(void)
 	// Insert ISR Code here
 	if(isStopWatchComplete(GPIO26_watch) == 1)
 	{
-
-		//GPIO26_COUNTER / GPIO26_PERIOD;
+		updateDSPfilter(&GPIO26filter, (GPIO26_COUNTER/GPIO26_PERIOD));
+		StopWatchRestart(GPIO26_watch);
 	}
 	else
 	{
@@ -141,7 +144,4 @@ __interrupt void  XINT2_ISR(void)
 	}
 	// To receive more interrupts from this PIE group, acknowledge this interrupt
 	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
-
-
-
 }

@@ -46,5 +46,6 @@ void ConfigLED1();
  */
 void ConfigLED0();
 
+void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint16 GPAPUD, Uint16 xint_polarity);
 
 #endif /* GPIO_H_ */
