@@ -198,5 +198,4 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
     updateDSPfilter(&B5filter, AdcResult.ADCRESULT11);
     updateDSPfilter(&B6filter, AdcResult.ADCRESULT12);
     updateDSPfilter(&B7filter, AdcResult.ADCRESULT13);
-
 }

@@ -83,6 +83,8 @@ void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint
 		GPIO19_COUNTER = 0;
 		GPIO19_PERIOD = 1.0/Sample_Frequency;
 		GPIO19_watch = StartStopWatch((1.0/Sample_Frequency)*500000);
+
+		GPIO19filter.isOn = 1;
 	}
 	else if(pin == 26)
 	{
@@ -101,6 +103,8 @@ void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint
 		GPIO26_COUNTER = 0;
 		GPIO26_PERIOD = 1.0/Sample_Frequency;
 		GPIO26_watch = StartStopWatch((1.0/Sample_Frequency)*500000); // change freq to period, convert to us, divide by 2
+
+		GPIO26filter.isOn = 1;
 	}
 	else  // Only two valid GPIO sensors on RW-3 revision
 	{
