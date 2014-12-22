@@ -4,6 +4,7 @@
 int datatest[] = {1, 5, 7, 2, 6, 7, 8, 2, 2, 7, 8, 3, 7, 3, 7, 3, 15, 6};
 
 DSPfilter A0filter;
+/*
 DSPfilter A1filter;
 DSPfilter A2filter;
 DSPfilter A3filter;
@@ -17,11 +18,13 @@ DSPfilter B4filter;
 DSPfilter B5filter;
 DSPfilter B6filter;
 DSPfilter B7filter;
-
+*/
 
 void adcinit()
 {
-	initDSPfilter(&A0filter, 1, TENK);
+	initDSPfilter(&A0filter, 100, TENK);
+	A0filter.isOn = 1;
+	/*
 	initDSPfilter(&A1filter, ONEK, TENK);
 	initDSPfilter(&A2filter, ONEK, TENK);
 	initDSPfilter(&A3filter, ONEK, TENK);
@@ -35,6 +38,7 @@ void adcinit()
 	initDSPfilter(&B5filter, ONEK, TENK);
 	initDSPfilter(&B6filter, ONEK, TENK);
 	initDSPfilter(&B7filter, ONEK, TENK);
+	*/
 
 	InitAdc();  // Init the ADC
 
@@ -161,12 +165,12 @@ void initDSPfilter(DSPfilter *filter, float CANFrequency, float samplingFrequenc
 	filter->isOn = 0;
 }
 
-void updateDSPfilter(DSPfilter *filter, unsigned newValue)
+void updateDSPfilter(DSPfilter *filter, float newValue)
 {
 	if (!filter->isOn) {
 		filter->outputValue = newValue;
 	} else {
-		filter->outputValue = filter->alpha * (float)newValue + (1.0 - filter->alpha) * (float)filter->outputValue;
+		filter->outputValue = filter->alpha * newValue + (1.0 - filter->alpha) * filter->outputValue;
 	}
 }
 
@@ -185,6 +189,7 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 	// Update DSP filters
     updateDSPfilter(&A0filter, AdcResult.ADCRESULT0);
     //updateDSPfilter(A0filter, datatest[A0filter.index]);
+    /*
     updateDSPfilter(&A1filter, AdcResult.ADCRESULT1);
     updateDSPfilter(&A2filter, AdcResult.ADCRESULT2);
     updateDSPfilter(&A3filter, AdcResult.ADCRESULT3);
@@ -198,4 +203,5 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
     updateDSPfilter(&B5filter, AdcResult.ADCRESULT11);
     updateDSPfilter(&B6filter, AdcResult.ADCRESULT12);
     updateDSPfilter(&B7filter, AdcResult.ADCRESULT13);
+    */
 }

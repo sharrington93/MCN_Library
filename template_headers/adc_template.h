@@ -11,7 +11,7 @@ void adcinit();
 
 typedef struct
 {
-	double alpha;
+	float alpha;
 	float outputValue;
 	char isOn;
 } DSPfilter;
@@ -25,7 +25,7 @@ void initDSPfilter(DSPfilter *filter, float CANFrequency, float samplingFrequenc
 /**
  * Update DPS output variables.
  */
-void updateDSPfilter(DSPfilter *filter, unsigned newValue);
+void updateDSPfilter(DSPfilter *filter, float newValue);
 
 #define ACQPS_VALUE				20
 #define ADC_RATIO				10
