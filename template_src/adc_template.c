@@ -9,6 +9,10 @@ DSPfilter A2filter;
 DSPfilter A3filter;
 DSPfilter A4filter;
 DSPfilter A5filter;
+
+extern DSPfilter GPIO19filter;
+extern DSPfilter GPIO26filter;
+/*
 DSPfilter B0filter;
 DSPfilter B1filter;
 DSPfilter B2filter;
@@ -17,16 +21,23 @@ DSPfilter B4filter;
 DSPfilter B5filter;
 DSPfilter B6filter;
 DSPfilter B7filter;
+*/
 
+extern float GPIO19_FREQ, GPIO26_FREQ;
+extern float GPIO19_COUNTER, GPIO26_COUNTER;
+
+Uint64 one_fixed_point = ((Uint32)1 << 16);
 
 void adcinit()
 {
-	initDSPfilter(&A0filter, 1, TENK);
-	initDSPfilter(&A1filter, ONEK, TENK);
-	initDSPfilter(&A2filter, ONEK, TENK);
-	initDSPfilter(&A3filter, ONEK, TENK);
-	initDSPfilter(&A4filter, ONEK, TENK);
-	initDSPfilter(&A5filter, ONEK, TENK);
+	initDSPfilter(&A0filter, ALPHA_SYS);
+	A0filter.isOn = 1;
+	initDSPfilter(&A1filter, ALPHA_SYS);
+	initDSPfilter(&A2filter, ALPHA_SYS);
+	initDSPfilter(&A3filter, ALPHA_SYS);
+	initDSPfilter(&A4filter, ALPHA_SYS);
+	initDSPfilter(&A5filter, ALPHA_SYS);
+	/*
 	initDSPfilter(&B0filter, ONEK, TENK);
 	initDSPfilter(&B1filter, ONEK, TENK);
 	initDSPfilter(&B2filter, ONEK, TENK);
@@ -35,7 +46,7 @@ void adcinit()
 	initDSPfilter(&B5filter, ONEK, TENK);
 	initDSPfilter(&B6filter, ONEK, TENK);
 	initDSPfilter(&B7filter, ONEK, TENK);
-
+	*/
 	InitAdc();  // Init the ADC
 
 	EALLOW;
@@ -120,13 +131,22 @@ void adcinit()
 	EPwm2Regs.ETSEL.bit.SOCAEN	= 1;		// Enable SOC on A group
 	EPwm2Regs.ETSEL.bit.SOCASEL	= 4;		// Select SOC from CPMA on upcount
 	EPwm2Regs.ETPS.bit.SOCAPRD 	= 1;		// Generate pulse on 1st event
+
+	/*
+	EPwm2Regs.ETSEL.bit.INTEN = 1;			// Generate PWM2 Interrupt
+	EPwm2Regs.ETSEL.bit.INTSEL = 4;			// Toggle interrupt from CPMA on upcount
+	EPwm2Regs.ETPS.bit.INTPRD = 1;			// Toggle interrupt on 1st event
+	*/
+
 	EPwm2Regs.CMPA.half.CMPA 	= 0x0BB7;	// Set compare A value
 	EPwm2Regs.TBPRD 			= 0x0BB7;	// Set period for ePWM2
 	EPwm2Regs.TBCTL.bit.CTRMODE	= 0;		// count up and start
 	//EPwm1Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;
-
 	PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
+	PieCtrlRegs.PIEIER3.bit.INTx2 = 1;
+
 	IER |= M_INT1;
+	IER |= M_INT3;
 	EDIS;
 }
 /*
@@ -153,20 +173,27 @@ void readADC()
 }
 */
 
-
-void initDSPfilter(DSPfilter *filter, float CANFrequency, float samplingFrequency)
+/*
+ * alpha = (1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency))) * 2^10;
+ */
+void initDSPfilter(DSPfilter *filter, Uint64 alpha)
 {
-	filter->alpha = 1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency));
+	filter->alpha = alpha;
 	filter->outputValue = 0;
 	filter->isOn = 0;
 }
 
-void updateDSPfilter(DSPfilter *filter, unsigned newValue)
+void updateDSPfilter(DSPfilter *filter, Uint64 newValue)
 {
 	if (!filter->isOn) {
 		filter->outputValue = newValue;
 	} else {
-		filter->outputValue = filter->alpha * (float)newValue + (1.0 - filter->alpha) * (float)filter->outputValue;
+		//newValue = newValue << 16;
+		Uint64 part1 = (filter->alpha * newValue);
+		Uint64 part2 = (one_fixed_point - filter->alpha);
+		Uint64 part3 = (filter->outputValue);
+		filter->outputValue =  (part1 + part2 * part3);
+		filter->filtered_value = filter->outputValue >> 32;
 	}
 }
 
@@ -190,6 +217,10 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
     updateDSPfilter(&A3filter, AdcResult.ADCRESULT3);
     updateDSPfilter(&A4filter, AdcResult.ADCRESULT4);
     updateDSPfilter(&A5filter, AdcResult.ADCRESULT5);
+
+    updateDSPfilter(&GPIO19filter, (GPIO19_COUNTER*GPIO19_FREQ));
+    updateDSPfilter(&GPIO26filter, (GPIO26_COUNTER*GPIO26_FREQ));
+    /*
     updateDSPfilter(&B0filter, AdcResult.ADCRESULT6);
     updateDSPfilter(&B1filter, AdcResult.ADCRESULT7);
     updateDSPfilter(&B2filter, AdcResult.ADCRESULT8);
@@ -198,4 +229,5 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
     updateDSPfilter(&B5filter, AdcResult.ADCRESULT11);
     updateDSPfilter(&B6filter, AdcResult.ADCRESULT12);
     updateDSPfilter(&B7filter, AdcResult.ADCRESULT13);
+    */
 }
