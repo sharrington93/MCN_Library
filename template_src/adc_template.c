@@ -9,10 +9,12 @@ DSPfilter A2filter;
 DSPfilter A3filter;
 DSPfilter A4filter;
 DSPfilter A5filter;
+DSPfilter A6filter;
+DSPfilter A7filter;
 
 extern DSPfilter GPIO19filter;
 extern DSPfilter GPIO26filter;
-/*
+
 DSPfilter B0filter;
 DSPfilter B1filter;
 DSPfilter B2filter;
@@ -21,7 +23,7 @@ DSPfilter B4filter;
 DSPfilter B5filter;
 DSPfilter B6filter;
 DSPfilter B7filter;
-*/
+
 
 extern float GPIO19_FREQ, GPIO26_FREQ;
 extern float GPIO19_COUNTER, GPIO26_COUNTER;
@@ -37,16 +39,17 @@ void adcinit()
 	initDSPfilter(&A3filter, ALPHA_SYS);
 	initDSPfilter(&A4filter, ALPHA_SYS);
 	initDSPfilter(&A5filter, ALPHA_SYS);
-	/*
-	initDSPfilter(&B0filter, ONEK, TENK);
-	initDSPfilter(&B1filter, ONEK, TENK);
-	initDSPfilter(&B2filter, ONEK, TENK);
-	initDSPfilter(&B3filter, ONEK, TENK);
-	initDSPfilter(&B4filter, ONEK, TENK);
-	initDSPfilter(&B5filter, ONEK, TENK);
-	initDSPfilter(&B6filter, ONEK, TENK);
-	initDSPfilter(&B7filter, ONEK, TENK);
-	*/
+	initDSPfilter(&A6filter, ALPHA_SYS);
+	initDSPfilter(&A7filter, ALPHA_SYS);
+	initDSPfilter(&B0filter, ALPHA_SYS);
+	initDSPfilter(&B1filter, ALPHA_SYS);
+	initDSPfilter(&B2filter, ALPHA_SYS);
+	initDSPfilter(&B3filter, ALPHA_SYS);
+	initDSPfilter(&B4filter, ALPHA_SYS);
+	initDSPfilter(&B5filter, ALPHA_SYS);
+	initDSPfilter(&B6filter, ALPHA_SYS);
+	initDSPfilter(&B7filter, ALPHA_SYS);
+
 	InitAdc();  // Init the ADC
 
 	EALLOW;
@@ -149,52 +152,78 @@ void adcinit()
 	IER |= M_INT3;
 	EDIS;
 }
-/*
-void readADC()
-{
-	AdcRegs.ADCSOCFRC1.all = 0xFFFF; 	//all socs
-
-    while(AdcRegs.ADCINTFLG.bit.ADCINT1 == 0){}  //Wait for ADCINT1
-    updateDSPfilter(A0filter, AdcResult.ADCRESULT0);
-    updateDSPfilter(A1filter, AdcResult.ADCRESULT1);
-    updateDSPfilter(A2filter, AdcResult.ADCRESULT2);
-    updateDSPfilter(A3filter, AdcResult.ADCRESULT3);
-    updateDSPfilter(A4filter, AdcResult.ADCRESULT4);
-    updateDSPfilter(A5filter, AdcResult.ADCRESULT5);
-    updateDSPfilter(B0filter, AdcResult.ADCRESULT6);
-    updateDSPfilter(B1filter, AdcResult.ADCRESULT7);
-    updateDSPfilter(B2filter, AdcResult.ADCRESULT8);
-    updateDSPfilter(B3filter, AdcResult.ADCRESULT9);
-    updateDSPfilter(B4filter, AdcResult.ADCRESULT10);
-    updateDSPfilter(B5filter, AdcResult.ADCRESULT11);
-    updateDSPfilter(B6filter, AdcResult.ADCRESULT12);
-    updateDSPfilter(B7filter, AdcResult.ADCRESULT13);
-    AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
-}
-*/
 
 /*
  * alpha = (1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency))) * 2^10;
  */
-void initDSPfilter(DSPfilter *filter, Uint64 alpha)
+void initDSPfilter(DSPfilter *filter, Uint32 alpha)
 {
 	filter->alpha = alpha;
 	filter->outputValue = 0;
 	filter->isOn = 0;
 }
 
-void updateDSPfilter(DSPfilter *filter, Uint64 newValue)
+void updateDSPfilter(DSPfilter *filter, Uint32 newValue)
 {
 	if (!filter->isOn) {
 		filter->outputValue = newValue;
 	} else {
-		//newValue = newValue << 16;
-		Uint64 part1 = (filter->alpha * newValue);
-		Uint64 part2 = (one_fixed_point - filter->alpha);
-		Uint64 part3 = (filter->outputValue);
-		filter->outputValue =  (part1 + part2 * part3);
-		filter->filtered_value = filter->outputValue >> 32;
+		filter->outputValue =  ((filter->alpha * newValue) + (((one_fixed_point - filter->alpha) * filter->outputValue) >> 16));
+		filter->filtered_value = filter->outputValue >> 16;
 	}
+}
+
+#pragma CODE_SECTION (updateAllFilters, "ramfuncs2")
+
+void updateAllFilters()
+{
+
+		A0filter.outputValue =  ((A0filter.alpha * AdcResult.ADCRESULT0) + (((one_fixed_point - A0filter.alpha) * A0filter.outputValue) >> 16));
+		A0filter.filtered_value = A0filter.outputValue >> 16;
+
+		A1filter.outputValue =  ((A1filter.alpha * AdcResult.ADCRESULT1) + (((one_fixed_point - A1filter.alpha) * A1filter.outputValue) >> 16));
+		A1filter.filtered_value = A1filter.outputValue >> 16;
+
+		A2filter.outputValue =  ((A2filter.alpha * AdcResult.ADCRESULT2) + (((one_fixed_point - A2filter.alpha) * A2filter.outputValue) >> 16));
+		A2filter.filtered_value = A2filter.outputValue >> 16;
+		A3filter.outputValue =  ((A3filter.alpha * AdcResult.ADCRESULT3) + (((one_fixed_point - A3filter.alpha) * A3filter.outputValue) >> 16));
+		A3filter.filtered_value = A3filter.outputValue >> 16;
+
+		A4filter.outputValue =  ((A4filter.alpha * AdcResult.ADCRESULT4) + (((one_fixed_point - A4filter.alpha) * A4filter.outputValue) >> 16));
+		A4filter.filtered_value = A4filter.outputValue >> 16;
+
+		A5filter.outputValue =  ((A5filter.alpha * AdcResult.ADCRESULT5) + (((one_fixed_point - A5filter.alpha) * A5filter.outputValue) >> 16));
+		A5filter.filtered_value = A5filter.outputValue >> 16;
+
+		A6filter.outputValue =  ((A6filter.alpha * AdcResult.ADCRESULT6) + (((one_fixed_point - A6filter.alpha) * A6filter.outputValue) >> 16));
+		A6filter.filtered_value = A6filter.outputValue >> 16;
+
+		A7filter.outputValue =  ((A7filter.alpha * AdcResult.ADCRESULT7) + (((one_fixed_point - A7filter.alpha) * A7filter.outputValue) >> 16));
+		A7filter.filtered_value = A7filter.outputValue >> 16;
+
+		B0filter.outputValue =  ((B0filter.alpha * AdcResult.ADCRESULT8) + (((one_fixed_point - B0filter.alpha) * B0filter.outputValue) >> 16));
+		B0filter.filtered_value = B0filter.outputValue >> 16;
+
+		B1filter.outputValue =  ((B1filter.alpha * AdcResult.ADCRESULT9) + (((one_fixed_point - B1filter.alpha) * B1filter.outputValue) >> 16));
+		B1filter.filtered_value = B1filter.outputValue >> 16;
+
+		B2filter.outputValue =  ((B2filter.alpha * AdcResult.ADCRESULT10) + (((one_fixed_point - B2filter.alpha) * B2filter.outputValue) >> 16));
+		B2filter.filtered_value = B2filter.outputValue >> 16;
+
+		B3filter.outputValue =  ((B3filter.alpha * AdcResult.ADCRESULT11) + (((one_fixed_point - B3filter.alpha) * B3filter.outputValue) >> 16));
+		B3filter.filtered_value = B3filter.outputValue >> 16;
+
+		B4filter.outputValue =  ((B4filter.alpha * AdcResult.ADCRESULT12) + (((one_fixed_point - B4filter.alpha) * B4filter.outputValue) >> 16));
+		B4filter.filtered_value = B4filter.outputValue >> 16;
+
+		B5filter.outputValue =  ((B5filter.alpha * AdcResult.ADCRESULT13) + (((one_fixed_point - B5filter.alpha) * B5filter.outputValue) >> 16));
+		B5filter.filtered_value = B5filter.outputValue >> 16;
+
+		B6filter.outputValue =  ((B6filter.alpha * AdcResult.ADCRESULT14) + (((one_fixed_point - B6filter.alpha) * B6filter.outputValue) >> 16));
+		B6filter.filtered_value = B6filter.outputValue >> 16;
+
+		B7filter.outputValue =  ((B7filter.alpha * AdcResult.ADCRESULT15) + (((one_fixed_point - B7filter.alpha) * B7filter.outputValue) >> 16));
+		B7filter.filtered_value = B7filter.outputValue >> 16;
 }
 
 // INT1.1
@@ -210,6 +239,8 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 
 
 	// Update DSP filters
+	updateAllFilters();
+	/*
     updateDSPfilter(&A0filter, AdcResult.ADCRESULT0);
     //updateDSPfilter(A0filter, datatest[A0filter.index]);
     updateDSPfilter(&A1filter, AdcResult.ADCRESULT1);
@@ -220,7 +251,6 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 
     updateDSPfilter(&GPIO19filter, (GPIO19_COUNTER*GPIO19_FREQ));
     updateDSPfilter(&GPIO26filter, (GPIO26_COUNTER*GPIO26_FREQ));
-    /*
     updateDSPfilter(&B0filter, AdcResult.ADCRESULT6);
     updateDSPfilter(&B1filter, AdcResult.ADCRESULT7);
     updateDSPfilter(&B2filter, AdcResult.ADCRESULT8);

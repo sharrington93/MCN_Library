@@ -11,9 +11,9 @@ void adcinit();
 
 typedef struct
 {
-	Uint64 alpha;
-	Uint64 outputValue;
-	Uint64 filtered_value;
+	Uint32 alpha;
+	Uint32 outputValue;
+	Uint32 filtered_value;
 	char isOn;
 } DSPfilter;
 
@@ -21,12 +21,13 @@ typedef struct
 /**
  * DSP filter initialization.
  */
-void initDSPfilter(DSPfilter *filter, Uint64 alpha);
+void initDSPfilter(DSPfilter *filter, Uint32 alpha);
 
 /**
  * Update DPS output variables.
  */
-void updateDSPfilter(DSPfilter *filter, Uint64 newValue);
+void updateDSPfilter(DSPfilter *filter, Uint32 newValue);
+void updateAllFilters();
 
 #define ACQPS_VALUE				20
 #define ADC_RATIO				10
