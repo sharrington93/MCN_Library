@@ -14,6 +14,7 @@ stopwatch_struct* conv_watch_in_sys;
 
 void SystemSensorInit(unsigned int time)
 {
+
 	//CONFIG ADC
 	adcinit();
 	//CONFIG GP_BUTTON

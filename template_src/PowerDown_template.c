@@ -7,21 +7,6 @@
 
 #include "template_all.h"
 
-extern DSPfilter A0filter;
-extern DSPfilter A1filter;
-extern DSPfilter A2filter;
-extern DSPfilter A3filter;
-extern DSPfilter A4filter;
-extern DSPfilter A5filter;
-extern DSPfilter B0filter;
-extern DSPfilter B1filter;
-extern DSPfilter B2filter;
-extern DSPfilter B3filter;
-extern DSPfilter B4filter;
-extern DSPfilter B5filter;
-extern DSPfilter B6filter;
-extern DSPfilter B7filter;
-
 void SystemPowerDown()
 {
 	while(isPowerOn() == 0) {}
@@ -30,22 +15,6 @@ void SystemPowerDown()
 	SysCtrlRegs.WDKEY = 0x00;                // wrong key should restart
 	SysCtrlRegs.WDKEY = 0x00;
 	EDIS;
-
-	// Free memory allocated for DSP filters
-	free(A0filter.previousValues);
-	free(A1filter.previousValues);
-	free(A2filter.previousValues);
-	free(A3filter.previousValues);
-	free(A4filter.previousValues);
-	free(A5filter.previousValues);
-	free(B0filter.previousValues);
-	free(B1filter.previousValues);
-	free(B2filter.previousValues);
-	free(B3filter.previousValues);
-	free(B4filter.previousValues);
-	free(B5filter.previousValues);
-	free(B6filter.previousValues);
-	free(B7filter.previousValues);
 
 	while(1){}
 }
