@@ -24,6 +24,8 @@
 
 #define		READGPBUTTON()			GpioDataRegs.GPADAT.bit.GPIO11
 
+#define 	GPIO19RESULT			GPIO19filter.filtered_output
+#define 	GPIO26RESULT			GPIO26filter.filtered_output
 
 /**
  * Configures the GPIO pin 11 to the GPIO button.
@@ -46,6 +48,6 @@ void ConfigLED1();
  */
 void ConfigLED0();
 
-void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint16 GPAPUD, Uint16 xint_polarity);
+void ConfigGPIOSensor(Uint32 alpha, float Sample_Frequency, int pin, Uint16 GPAPUD, Uint16 xint_polarity);
 
 #endif /* GPIO_H_ */

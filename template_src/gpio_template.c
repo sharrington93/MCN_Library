@@ -10,8 +10,8 @@
 DSPfilter GPIO19filter;
 DSPfilter GPIO26filter;
 
-float GPIO19_PERIOD, GPIO26_PERIOD;
-unsigned int GPIO19_COUNTER, GPIO26_COUNTER;
+Uint32 GPIO19_FREQ, GPIO26_FREQ;
+Uint32 GPIO19_COUNTER, GPIO26_COUNTER;
 stopwatch_struct* GPIO19_watch, *GPIO26_watch;
 
 void ConfigLED0()
@@ -60,7 +60,7 @@ void ConfigGPButton()
 	EDIS;
 }
 
-void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint16 GPAPUD, Uint16 xint_polarity)
+void ConfigGPIOSensor(Uint32 alpha, float Sample_Frequency, int pin, Uint16 GPAPUD, Uint16 xint_polarity)
 {
 	EALLOW;
 
@@ -78,10 +78,10 @@ void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint
 		GpioIntRegs.GPIOXINT1SEL.bit.GPIOSEL = 19;
 		XIntruptRegs.XINT1CR.bit.POLARITY = xint_polarity;
 		XIntruptRegs.XINT1CR.bit.ENABLE = 1;
-		initDSPfilter(&GPIO19filter, ONEK, TENK);
+		initDSPfilter(&GPIO19filter, alpha);
 
 		GPIO19_COUNTER = 0;
-		GPIO19_PERIOD = 1.0/Sample_Frequency;
+		GPIO19_FREQ = Sample_Frequency;
 		GPIO19_watch = StartStopWatch((1.0/Sample_Frequency)*500000);
 
 		GPIO19filter.isOn = 1;
@@ -98,10 +98,10 @@ void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint
 		GpioIntRegs.GPIOXINT2SEL.bit.GPIOSEL = 26;
 		XIntruptRegs.XINT2CR.bit.POLARITY = xint_polarity;
 		XIntruptRegs.XINT2CR.bit.ENABLE = 1;
-		initDSPfilter(&GPIO26filter, CAN_Frequency, Sample_Frequency);
+		initDSPfilter(&GPIO26filter, alpha);
 
 		GPIO26_COUNTER = 0;
-		GPIO26_PERIOD = 1.0/Sample_Frequency;
+		GPIO26_FREQ = Sample_Frequency;
 		GPIO26_watch = StartStopWatch((1.0/Sample_Frequency)*500000); // change freq to period, convert to us, divide by 2
 
 		GPIO26filter.isOn = 1;
@@ -118,16 +118,7 @@ void ConfigGPIOSensor(float CAN_Frequency, float Sample_Frequency, int pin, Uint
 // INT1.3 - Reserved
 __interrupt void XINT1_ISR(void)
 {
-	// Insert ISR Code here
-	if (isStopWatchComplete(GPIO19_watch) == 1)
-	{
-		updateDSPfilter(&GPIO19filter, (GPIO19_COUNTER/GPIO19_PERIOD));
-		StopWatchRestart(GPIO19_watch);
-	}
-	else
-	{
-		GPIO19_COUNTER++;
-	}
+	GPIO19_COUNTER++;
 	// To receive more interrupts from this PIE group, acknowledge this interrupt
 	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 
@@ -136,16 +127,8 @@ __interrupt void XINT1_ISR(void)
 // INT1.5
 __interrupt void  XINT2_ISR(void)
 {
-	// Insert ISR Code here
-	if(isStopWatchComplete(GPIO26_watch) == 1)
-	{
-		updateDSPfilter(&GPIO26filter, (GPIO26_COUNTER/GPIO26_PERIOD));
-		StopWatchRestart(GPIO26_watch);
-	}
-	else
-	{
-		GPIO26_COUNTER++;
-	}
+	GPIO26_COUNTER++;
 	// To receive more interrupts from this PIE group, acknowledge this interrupt
 	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 }
+

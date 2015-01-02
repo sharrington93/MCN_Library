@@ -4,12 +4,17 @@
 int datatest[] = {1, 5, 7, 2, 6, 7, 8, 2, 2, 7, 8, 3, 7, 3, 7, 3, 15, 6};
 
 DSPfilter A0filter;
-/*
 DSPfilter A1filter;
 DSPfilter A2filter;
 DSPfilter A3filter;
 DSPfilter A4filter;
 DSPfilter A5filter;
+DSPfilter A6filter;
+DSPfilter A7filter;
+
+extern DSPfilter GPIO19filter;
+extern DSPfilter GPIO26filter;
+
 DSPfilter B0filter;
 DSPfilter B1filter;
 DSPfilter B2filter;
@@ -18,27 +23,34 @@ DSPfilter B4filter;
 DSPfilter B5filter;
 DSPfilter B6filter;
 DSPfilter B7filter;
-*/
+
+
+extern Uint32 GPIO19_FREQ, GPIO26_FREQ;
+extern Uint32 GPIO19_COUNTER, GPIO26_COUNTER;
+
+int count = 0;
+
+Uint64 one_fixed_point = ((Uint32)1 << 16);
 
 void adcinit()
 {
-	initDSPfilter(&A0filter, 100, TENK);
+	initDSPfilter(&A0filter, ALPHA_SYS);
 	A0filter.isOn = 1;
-	/*
-	initDSPfilter(&A1filter, ONEK, TENK);
-	initDSPfilter(&A2filter, ONEK, TENK);
-	initDSPfilter(&A3filter, ONEK, TENK);
-	initDSPfilter(&A4filter, ONEK, TENK);
-	initDSPfilter(&A5filter, ONEK, TENK);
-	initDSPfilter(&B0filter, ONEK, TENK);
-	initDSPfilter(&B1filter, ONEK, TENK);
-	initDSPfilter(&B2filter, ONEK, TENK);
-	initDSPfilter(&B3filter, ONEK, TENK);
-	initDSPfilter(&B4filter, ONEK, TENK);
-	initDSPfilter(&B5filter, ONEK, TENK);
-	initDSPfilter(&B6filter, ONEK, TENK);
-	initDSPfilter(&B7filter, ONEK, TENK);
-	*/
+	initDSPfilter(&A1filter, ALPHA_SYS);
+	initDSPfilter(&A2filter, ALPHA_SYS);
+	initDSPfilter(&A3filter, ALPHA_SYS);
+	initDSPfilter(&A4filter, ALPHA_SYS);
+	initDSPfilter(&A5filter, ALPHA_SYS);
+	initDSPfilter(&A6filter, ALPHA_SYS);
+	initDSPfilter(&A7filter, ALPHA_SYS);
+	initDSPfilter(&B0filter, ALPHA_SYS);
+	initDSPfilter(&B1filter, ALPHA_SYS);
+	initDSPfilter(&B2filter, ALPHA_SYS);
+	initDSPfilter(&B3filter, ALPHA_SYS);
+	initDSPfilter(&B4filter, ALPHA_SYS);
+	initDSPfilter(&B5filter, ALPHA_SYS);
+	initDSPfilter(&B6filter, ALPHA_SYS);
+	initDSPfilter(&B7filter, ALPHA_SYS);
 
 	InitAdc();  // Init the ADC
 
@@ -124,54 +136,148 @@ void adcinit()
 	EPwm2Regs.ETSEL.bit.SOCAEN	= 1;		// Enable SOC on A group
 	EPwm2Regs.ETSEL.bit.SOCASEL	= 4;		// Select SOC from CPMA on upcount
 	EPwm2Regs.ETPS.bit.SOCAPRD 	= 1;		// Generate pulse on 1st event
+
+	/*
+	EPwm2Regs.ETSEL.bit.INTEN = 1;			// Generate PWM2 Interrupt
+	EPwm2Regs.ETSEL.bit.INTSEL = 4;			// Toggle interrupt from CPMA on upcount
+	EPwm2Regs.ETPS.bit.INTPRD = 1;			// Toggle interrupt on 1st event
+	*/
+
 	EPwm2Regs.CMPA.half.CMPA 	= 0x0BB7;	// Set compare A value
 	EPwm2Regs.TBPRD 			= 0x0BB7;	// Set period for ePWM2
 	EPwm2Regs.TBCTL.bit.CTRMODE	= 0;		// count up and start
 	//EPwm1Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;
 
-	PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
-	IER |= M_INT1;
+	//PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
+	PieCtrlRegs.PIEIER3.bit.INTx2 = 1;
+	PieCtrlRegs.PIEIER10.bit.INTx1 = 1;
+
+	//IER |= M_INT1;
+	IER |= M_INT3;
+	IER |= M_INT10;
+	EDIS;
+
+
+	EALLOW;
+	GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 0;         // GPIO
+	GpioCtrlRegs.GPADIR.bit.GPIO2 = 1;          // output
+	GpioCtrlRegs.GPAQSEL1.bit.GPIO2 = 0;        //Synch to SYSCLKOUT only
+	GpioCtrlRegs.GPAPUD.bit.GPIO2 = 1; 		//disable pull up
+
+
+	GpioCtrlRegs.GPAMUX1.bit.GPIO4 = 0;         // GPIO
+	GpioCtrlRegs.GPADIR.bit.GPIO4 = 1;          // output
+	GpioCtrlRegs.GPAQSEL1.bit.GPIO4 = 0;        //Synch to SYSCLKOUT only
+	GpioCtrlRegs.GPAPUD.bit.GPIO4 = 1; 		//disable pull up
+
+	GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 0;         // GPIO
+	GpioCtrlRegs.GPADIR.bit.GPIO6 = 1;          // output
+	GpioCtrlRegs.GPAQSEL1.bit.GPIO6 = 0;        //Synch to SYSCLKOUT only
+	GpioCtrlRegs.GPAPUD.bit.GPIO6 = 1; 		//disable pull up
+
+	GpioCtrlRegs.GPAMUX1.bit.GPIO8 = 0;         // GPIO
+	GpioCtrlRegs.GPADIR.bit.GPIO8 = 1;          // output
+	GpioCtrlRegs.GPAQSEL1.bit.GPIO8 = 0;        //Synch to SYSCLKOUT only
+	GpioCtrlRegs.GPAPUD.bit.GPIO8 = 1; 		//disable pull up
 	EDIS;
 }
+
 /*
-void readADC()
+ * alpha = (1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency))) * 2^16;
+ */
+void initDSPfilter(DSPfilter *filter, Uint32 alpha)
 {
-	AdcRegs.ADCSOCFRC1.all = 0xFFFF; 	//all socs
-
-    while(AdcRegs.ADCINTFLG.bit.ADCINT1 == 0){}  //Wait for ADCINT1
-    updateDSPfilter(A0filter, AdcResult.ADCRESULT0);
-    updateDSPfilter(A1filter, AdcResult.ADCRESULT1);
-    updateDSPfilter(A2filter, AdcResult.ADCRESULT2);
-    updateDSPfilter(A3filter, AdcResult.ADCRESULT3);
-    updateDSPfilter(A4filter, AdcResult.ADCRESULT4);
-    updateDSPfilter(A5filter, AdcResult.ADCRESULT5);
-    updateDSPfilter(B0filter, AdcResult.ADCRESULT6);
-    updateDSPfilter(B1filter, AdcResult.ADCRESULT7);
-    updateDSPfilter(B2filter, AdcResult.ADCRESULT8);
-    updateDSPfilter(B3filter, AdcResult.ADCRESULT9);
-    updateDSPfilter(B4filter, AdcResult.ADCRESULT10);
-    updateDSPfilter(B5filter, AdcResult.ADCRESULT11);
-    updateDSPfilter(B6filter, AdcResult.ADCRESULT12);
-    updateDSPfilter(B7filter, AdcResult.ADCRESULT13);
-    AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
-}
-*/
-
-
-void initDSPfilter(DSPfilter *filter, float CANFrequency, float samplingFrequency)
-{
-	filter->alpha = 1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency));
+	filter->alpha = alpha;
 	filter->outputValue = 0;
 	filter->isOn = 0;
 }
 
-void updateDSPfilter(DSPfilter *filter, float newValue)
+void updateDSPfilter(DSPfilter *filter, Uint32 newValue)
 {
 	if (!filter->isOn) {
 		filter->outputValue = newValue;
 	} else {
-		filter->outputValue = filter->alpha * newValue + (1.0 - filter->alpha) * filter->outputValue;
+		filter->outputValue =  ((filter->alpha * newValue) + (((one_fixed_point - filter->alpha) * filter->outputValue) >> 16));
+		filter->filtered_value = filter->outputValue >> 16;
 	}
+}
+
+#pragma CODE_SECTION (updateAllFilters, "ramfuncs")
+
+void updateAllFilters()
+{
+		A0filter.outputValue =  ((A0filter.alpha * AdcResult.ADCRESULT0) + (((one_fixed_point - A0filter.alpha) * A0filter.outputValue) >> 16));
+		A0filter.filtered_value = A0filter.outputValue >> 16;
+
+		A1filter.outputValue =  ((A1filter.alpha * AdcResult.ADCRESULT1) + (((one_fixed_point - A1filter.alpha) * A1filter.outputValue) >> 16));
+		A1filter.filtered_value = A1filter.outputValue >> 16;
+
+		A2filter.outputValue =  ((A2filter.alpha * AdcResult.ADCRESULT2) + (((one_fixed_point - A2filter.alpha) * A2filter.outputValue) >> 16));
+		A2filter.filtered_value = A2filter.outputValue >> 16;
+		A3filter.outputValue =  ((A3filter.alpha * AdcResult.ADCRESULT3) + (((one_fixed_point - A3filter.alpha) * A3filter.outputValue) >> 16));
+		A3filter.filtered_value = A3filter.outputValue >> 16;
+
+		A4filter.outputValue =  ((A4filter.alpha * AdcResult.ADCRESULT4) + (((one_fixed_point - A4filter.alpha) * A4filter.outputValue) >> 16));
+		A4filter.filtered_value = A4filter.outputValue >> 16;
+
+		A5filter.outputValue =  ((A5filter.alpha * AdcResult.ADCRESULT5) + (((one_fixed_point - A5filter.alpha) * A5filter.outputValue) >> 16));
+		A5filter.filtered_value = A5filter.outputValue >> 16;
+
+		A6filter.outputValue =  ((A6filter.alpha * AdcResult.ADCRESULT6) + (((one_fixed_point - A6filter.alpha) * A6filter.outputValue) >> 16));
+		A6filter.filtered_value = A6filter.outputValue >> 16;
+
+		A7filter.outputValue =  ((A7filter.alpha * AdcResult.ADCRESULT7) + (((one_fixed_point - A7filter.alpha) * A7filter.outputValue) >> 16));
+		A7filter.filtered_value = A7filter.outputValue >> 16;
+
+		B0filter.outputValue =  ((B0filter.alpha * AdcResult.ADCRESULT8) + (((one_fixed_point - B0filter.alpha) * B0filter.outputValue) >> 16));
+		B0filter.filtered_value = B0filter.outputValue >> 16;
+
+		B1filter.outputValue =  ((B1filter.alpha * AdcResult.ADCRESULT9) + (((one_fixed_point - B1filter.alpha) * B1filter.outputValue) >> 16));
+		B1filter.filtered_value = B1filter.outputValue >> 16;
+
+		B2filter.outputValue =  ((B2filter.alpha * AdcResult.ADCRESULT10) + (((one_fixed_point - B2filter.alpha) * B2filter.outputValue) >> 16));
+		B2filter.filtered_value = B2filter.outputValue >> 16;
+
+		B3filter.outputValue =  ((B3filter.alpha * AdcResult.ADCRESULT11) + (((one_fixed_point - B3filter.alpha) * B3filter.outputValue) >> 16));
+		B3filter.filtered_value = B3filter.outputValue >> 16;
+
+		B4filter.outputValue =  ((B4filter.alpha * AdcResult.ADCRESULT12) + (((one_fixed_point - B4filter.alpha) * B4filter.outputValue) >> 16));
+		B4filter.filtered_value = B4filter.outputValue >> 16;
+
+		B5filter.outputValue =  ((B5filter.alpha * AdcResult.ADCRESULT13) + (((one_fixed_point - B5filter.alpha) * B5filter.outputValue) >> 16));
+		B5filter.filtered_value = B5filter.outputValue >> 16;
+
+		B6filter.outputValue =  ((B6filter.alpha * AdcResult.ADCRESULT14) + (((one_fixed_point - B6filter.alpha) * B6filter.outputValue) >> 16));
+		B6filter.filtered_value = B6filter.outputValue >> 16;
+
+		B7filter.outputValue =  ((B7filter.alpha * AdcResult.ADCRESULT15) + (((one_fixed_point - B7filter.alpha) * B7filter.outputValue) >> 16));
+		B7filter.filtered_value = B7filter.outputValue >> 16;
+
+
+
+
+		GpioDataRegs.GPADAT.bit.GPIO2 = GPIO26_COUNTER & 0x01;
+		GpioDataRegs.GPADAT.bit.GPIO4 = (GPIO26_COUNTER & 0x02)>> 1;
+		GpioDataRegs.GPADAT.bit.GPIO6 = (GPIO26_COUNTER & 4) >> 2;
+		if(count >= 100)
+		{
+			GpioDataRegs.GPASET.bit.GPIO8 = 1;
+
+			GPIO19filter.outputValue = ((GPIO19filter.alpha * GPIO19_COUNTER) + (((one_fixed_point - GPIO19filter.alpha) * GPIO19filter.outputValue) >> 16));
+			GPIO19filter.filtered_value = (float)((GPIO19filter.outputValue  * GPIO19_FREQ) >> 16)/100.0;
+			GPIO19_COUNTER = 0;
+
+			GPIO26filter.outputValue = ((GPIO26filter.alpha * GPIO26_COUNTER) + (((one_fixed_point - GPIO26filter.alpha) * GPIO26filter.outputValue) >> 16));
+			GPIO26filter.filtered_value = (float)((GPIO26filter.outputValue * GPIO26_FREQ) >> 16)/100.0; //Sample Freq / 100
+			GPIO26_COUNTER = 0;
+			count = 0;
+		}
+		else
+		{
+			count++;
+			GpioDataRegs.GPACLEAR.bit.GPIO8 = 1;
+		}
+
 }
 
 // INT1.1
@@ -181,27 +287,13 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 	EALLOW;
 	AdcRegs.ADCOFFTRIM.bit.OFFTRIM = AdcRegs.ADCOFFTRIM.bit.OFFTRIM - AdcResult.ADCRESULT13;  //Set offtrim register with new value (i.e remove artical offset (+80) and create a two's compliment of the offset error)
 	EDIS;
+
 	// To receive more interrupts from this PIE group, acknowledge this interrupt
-	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+	PieCtrlRegs.PIEACK.all = PIEACK_GROUP10;
 	AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
 
-
+	EINT;
 	// Update DSP filters
-    updateDSPfilter(&A0filter, AdcResult.ADCRESULT0);
-    //updateDSPfilter(A0filter, datatest[A0filter.index]);
-    /*
-    updateDSPfilter(&A1filter, AdcResult.ADCRESULT1);
-    updateDSPfilter(&A2filter, AdcResult.ADCRESULT2);
-    updateDSPfilter(&A3filter, AdcResult.ADCRESULT3);
-    updateDSPfilter(&A4filter, AdcResult.ADCRESULT4);
-    updateDSPfilter(&A5filter, AdcResult.ADCRESULT5);
-    updateDSPfilter(&B0filter, AdcResult.ADCRESULT6);
-    updateDSPfilter(&B1filter, AdcResult.ADCRESULT7);
-    updateDSPfilter(&B2filter, AdcResult.ADCRESULT8);
-    updateDSPfilter(&B3filter, AdcResult.ADCRESULT9);
-    updateDSPfilter(&B4filter, AdcResult.ADCRESULT10);
-    updateDSPfilter(&B5filter, AdcResult.ADCRESULT11);
-    updateDSPfilter(&B6filter, AdcResult.ADCRESULT12);
-    updateDSPfilter(&B7filter, AdcResult.ADCRESULT13);
-    */
+	updateAllFilters();
+	DINT;
 }
