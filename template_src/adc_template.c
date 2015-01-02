@@ -25,8 +25,10 @@ DSPfilter B6filter;
 DSPfilter B7filter;
 
 
-extern float GPIO19_FREQ, GPIO26_FREQ;
-extern float GPIO19_COUNTER, GPIO26_COUNTER;
+extern Uint32 GPIO19_FREQ, GPIO26_FREQ;
+extern Uint32 GPIO19_COUNTER, GPIO26_COUNTER;
+
+int count = 0;
 
 Uint64 one_fixed_point = ((Uint32)1 << 16);
 
@@ -145,16 +147,43 @@ void adcinit()
 	EPwm2Regs.TBPRD 			= 0x0BB7;	// Set period for ePWM2
 	EPwm2Regs.TBCTL.bit.CTRMODE	= 0;		// count up and start
 	//EPwm1Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;
-	PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
-	PieCtrlRegs.PIEIER3.bit.INTx2 = 1;
 
-	IER |= M_INT1;
+	//PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
+	PieCtrlRegs.PIEIER3.bit.INTx2 = 1;
+	PieCtrlRegs.PIEIER10.bit.INTx1 = 1;
+
+	//IER |= M_INT1;
 	IER |= M_INT3;
+	IER |= M_INT10;
+	EDIS;
+
+
+	EALLOW;
+	GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 0;         // GPIO
+	GpioCtrlRegs.GPADIR.bit.GPIO2 = 1;          // output
+	GpioCtrlRegs.GPAQSEL1.bit.GPIO2 = 0;        //Synch to SYSCLKOUT only
+	GpioCtrlRegs.GPAPUD.bit.GPIO2 = 1; 		//disable pull up
+
+
+	GpioCtrlRegs.GPAMUX1.bit.GPIO4 = 0;         // GPIO
+	GpioCtrlRegs.GPADIR.bit.GPIO4 = 1;          // output
+	GpioCtrlRegs.GPAQSEL1.bit.GPIO4 = 0;        //Synch to SYSCLKOUT only
+	GpioCtrlRegs.GPAPUD.bit.GPIO4 = 1; 		//disable pull up
+
+	GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 0;         // GPIO
+	GpioCtrlRegs.GPADIR.bit.GPIO6 = 1;          // output
+	GpioCtrlRegs.GPAQSEL1.bit.GPIO6 = 0;        //Synch to SYSCLKOUT only
+	GpioCtrlRegs.GPAPUD.bit.GPIO6 = 1; 		//disable pull up
+
+	GpioCtrlRegs.GPAMUX1.bit.GPIO8 = 0;         // GPIO
+	GpioCtrlRegs.GPADIR.bit.GPIO8 = 1;          // output
+	GpioCtrlRegs.GPAQSEL1.bit.GPIO8 = 0;        //Synch to SYSCLKOUT only
+	GpioCtrlRegs.GPAPUD.bit.GPIO8 = 1; 		//disable pull up
 	EDIS;
 }
 
 /*
- * alpha = (1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency))) * 2^10;
+ * alpha = (1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency))) * 2^16;
  */
 void initDSPfilter(DSPfilter *filter, Uint32 alpha)
 {
@@ -173,11 +202,10 @@ void updateDSPfilter(DSPfilter *filter, Uint32 newValue)
 	}
 }
 
-#pragma CODE_SECTION (updateAllFilters, "ramfuncs2")
+#pragma CODE_SECTION (updateAllFilters, "ramfuncs")
 
 void updateAllFilters()
 {
-
 		A0filter.outputValue =  ((A0filter.alpha * AdcResult.ADCRESULT0) + (((one_fixed_point - A0filter.alpha) * A0filter.outputValue) >> 16));
 		A0filter.filtered_value = A0filter.outputValue >> 16;
 
@@ -224,6 +252,32 @@ void updateAllFilters()
 
 		B7filter.outputValue =  ((B7filter.alpha * AdcResult.ADCRESULT15) + (((one_fixed_point - B7filter.alpha) * B7filter.outputValue) >> 16));
 		B7filter.filtered_value = B7filter.outputValue >> 16;
+
+
+
+
+		GpioDataRegs.GPADAT.bit.GPIO2 = GPIO26_COUNTER & 0x01;
+		GpioDataRegs.GPADAT.bit.GPIO4 = (GPIO26_COUNTER & 0x02)>> 1;
+		GpioDataRegs.GPADAT.bit.GPIO6 = (GPIO26_COUNTER & 4) >> 2;
+		if(count >= 100)
+		{
+			GpioDataRegs.GPASET.bit.GPIO8 = 1;
+
+			GPIO19filter.outputValue = ((GPIO19filter.alpha * GPIO19_COUNTER) + (((one_fixed_point - GPIO19filter.alpha) * GPIO19filter.outputValue) >> 16));
+			GPIO19filter.filtered_value = (float)((GPIO19filter.outputValue  * GPIO19_FREQ) >> 16)/100.0;
+			GPIO19_COUNTER = 0;
+
+			GPIO26filter.outputValue = ((GPIO26filter.alpha * GPIO26_COUNTER) + (((one_fixed_point - GPIO26filter.alpha) * GPIO26filter.outputValue) >> 16));
+			GPIO26filter.filtered_value = (float)((GPIO26filter.outputValue * GPIO26_FREQ) >> 16)/100.0; //Sample Freq / 100
+			GPIO26_COUNTER = 0;
+			count = 0;
+		}
+		else
+		{
+			count++;
+			GpioDataRegs.GPACLEAR.bit.GPIO8 = 1;
+		}
+
 }
 
 // INT1.1
@@ -233,31 +287,13 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 	EALLOW;
 	AdcRegs.ADCOFFTRIM.bit.OFFTRIM = AdcRegs.ADCOFFTRIM.bit.OFFTRIM - AdcResult.ADCRESULT13;  //Set offtrim register with new value (i.e remove artical offset (+80) and create a two's compliment of the offset error)
 	EDIS;
+
 	// To receive more interrupts from this PIE group, acknowledge this interrupt
-	PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+	PieCtrlRegs.PIEACK.all = PIEACK_GROUP10;
 	AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
 
-
+	EINT;
 	// Update DSP filters
 	updateAllFilters();
-	/*
-    updateDSPfilter(&A0filter, AdcResult.ADCRESULT0);
-    //updateDSPfilter(A0filter, datatest[A0filter.index]);
-    updateDSPfilter(&A1filter, AdcResult.ADCRESULT1);
-    updateDSPfilter(&A2filter, AdcResult.ADCRESULT2);
-    updateDSPfilter(&A3filter, AdcResult.ADCRESULT3);
-    updateDSPfilter(&A4filter, AdcResult.ADCRESULT4);
-    updateDSPfilter(&A5filter, AdcResult.ADCRESULT5);
-
-    updateDSPfilter(&GPIO19filter, (GPIO19_COUNTER*GPIO19_FREQ));
-    updateDSPfilter(&GPIO26filter, (GPIO26_COUNTER*GPIO26_FREQ));
-    updateDSPfilter(&B0filter, AdcResult.ADCRESULT6);
-    updateDSPfilter(&B1filter, AdcResult.ADCRESULT7);
-    updateDSPfilter(&B2filter, AdcResult.ADCRESULT8);
-    updateDSPfilter(&B3filter, AdcResult.ADCRESULT9);
-    updateDSPfilter(&B4filter, AdcResult.ADCRESULT10);
-    updateDSPfilter(&B5filter, AdcResult.ADCRESULT11);
-    updateDSPfilter(&B6filter, AdcResult.ADCRESULT12);
-    updateDSPfilter(&B7filter, AdcResult.ADCRESULT13);
-    */
+	DINT;
 }

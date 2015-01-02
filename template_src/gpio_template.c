@@ -10,8 +10,8 @@
 DSPfilter GPIO19filter;
 DSPfilter GPIO26filter;
 
-float GPIO19_FREQ, GPIO26_FREQ;
-float GPIO19_COUNTER, GPIO26_COUNTER;
+Uint32 GPIO19_FREQ, GPIO26_FREQ;
+Uint32 GPIO19_COUNTER, GPIO26_COUNTER;
 stopwatch_struct* GPIO19_watch, *GPIO26_watch;
 
 void ConfigLED0()

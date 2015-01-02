@@ -24,8 +24,8 @@
 
 #define		READGPBUTTON()			GpioDataRegs.GPADAT.bit.GPIO11
 
-#define 	GPIO19RESULT			GPIO19filter.outputValue
-#define 	GPIO26RESULT			GPIO26filter.outputValue
+#define 	GPIO19RESULT			GPIO19filter.filtered_output
+#define 	GPIO26RESULT			GPIO26filter.filtered_output
 
 /**
  * Configures the GPIO pin 11 to the GPIO button.

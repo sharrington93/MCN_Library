@@ -50,7 +50,7 @@ const struct PIE_VECT_TABLE PieVectTableInit = {
       USER12_ISR,    // User Defined trap 12
 
 // Group 1 PIE Vectors
-      ADCINT1_ISR,     // 1.1 ADC  // if this is rsvd_ISR, then INT10.1 should be defined as ADCINT1_ISR
+      rsvd_ISR,     // 1.1 ADC  // if this is rsvd_ISR, then INT10.1 should be defined as ADCINT1_ISR
       ADCINT2_ISR,     // 1.2 ADC  // if this is rsvd_ISR, then INT10.2 should be defined as ADCINT2_ISR
       rsvd_ISR,        // 1.3
       XINT1_ISR,       // 1.4 External Interrupt
@@ -141,7 +141,7 @@ const struct PIE_VECT_TABLE PieVectTableInit = {
       rsvd_ISR,        // 9.8
 
 // Group 10 PIE Vectors
-      rsvd_ISR,        // 10.1 If this is ADCINT1_ISR, then INT1.1 should be defined as rsvd_ISR
+      ADCINT1_ISR,        // 10.1 If this is ADCINT1_ISR, then INT1.1 should be defined as rsvd_ISR
       rsvd_ISR,        // 10.2 If this is ADCINT2_ISR, then INT1.2 should be defined as rsvd_ISR
       ADCINT3_ISR,     // 10.3 ADC
       ADCINT4_ISR,     // 10.4 ADC
