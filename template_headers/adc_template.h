@@ -57,7 +57,7 @@ void updateAllFilters();
 /*
  * alpha = (1.0 - exp(-2.0 * PI * (CANFrequency / samplingFrequency))) * 2^16;
  */
-#define ALPHA_SYS				3991
+#define ALPHA_SYS				206
 
 #endif /* 12V_H_ */
 
