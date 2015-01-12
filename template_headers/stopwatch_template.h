@@ -23,7 +23,7 @@ void StopWatchSetUp(float time);
 
 /**
  * Starts the stopwatch for x amount of seconds
- * 		time: time to run the stopwatch for in seconds.
+ * 		time: time to run the stopwatch for in
  *
  * Returns a pointer to a new stopwatch with the corresponding end time.
  */

@@ -573,7 +573,7 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 	}
 }
 
-int InsertCANMessage(int Mbox, unsigned int MDH, unsigned int MDL)
+int InsertCANMessage(int Mbox, unsigned long MDH, unsigned long MDL)
 {
 	int result = 1;
 	EALLOW;

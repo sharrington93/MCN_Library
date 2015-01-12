@@ -34,24 +34,6 @@ Uint64 one_fixed_point = ((Uint32)1 << 16);
 
 void adcinit()
 {
-	initDSPfilter(&A0filter, ALPHA_SYS);
-	A0filter.isOn = 1;
-	initDSPfilter(&A1filter, ALPHA_SYS);
-	initDSPfilter(&A2filter, ALPHA_SYS);
-	initDSPfilter(&A3filter, ALPHA_SYS);
-	initDSPfilter(&A4filter, ALPHA_SYS);
-	initDSPfilter(&A5filter, ALPHA_SYS);
-	initDSPfilter(&A6filter, ALPHA_SYS);
-	initDSPfilter(&A7filter, ALPHA_SYS);
-	initDSPfilter(&B0filter, ALPHA_SYS);
-	initDSPfilter(&B1filter, ALPHA_SYS);
-	initDSPfilter(&B2filter, ALPHA_SYS);
-	initDSPfilter(&B3filter, ALPHA_SYS);
-	initDSPfilter(&B4filter, ALPHA_SYS);
-	initDSPfilter(&B5filter, ALPHA_SYS);
-	initDSPfilter(&B6filter, ALPHA_SYS);
-	initDSPfilter(&B7filter, ALPHA_SYS);
-
 	InitAdc();  // Init the ADC
 
 	EALLOW;
@@ -156,30 +138,6 @@ void adcinit()
 	IER |= M_INT3;
 	IER |= M_INT10;
 	EDIS;
-
-
-	EALLOW;
-	GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 0;         // GPIO
-	GpioCtrlRegs.GPADIR.bit.GPIO2 = 1;          // output
-	GpioCtrlRegs.GPAQSEL1.bit.GPIO2 = 0;        //Synch to SYSCLKOUT only
-	GpioCtrlRegs.GPAPUD.bit.GPIO2 = 1; 		//disable pull up
-
-
-	GpioCtrlRegs.GPAMUX1.bit.GPIO4 = 0;         // GPIO
-	GpioCtrlRegs.GPADIR.bit.GPIO4 = 1;          // output
-	GpioCtrlRegs.GPAQSEL1.bit.GPIO4 = 0;        //Synch to SYSCLKOUT only
-	GpioCtrlRegs.GPAPUD.bit.GPIO4 = 1; 		//disable pull up
-
-	GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 0;         // GPIO
-	GpioCtrlRegs.GPADIR.bit.GPIO6 = 1;          // output
-	GpioCtrlRegs.GPAQSEL1.bit.GPIO6 = 0;        //Synch to SYSCLKOUT only
-	GpioCtrlRegs.GPAPUD.bit.GPIO6 = 1; 		//disable pull up
-
-	GpioCtrlRegs.GPAMUX1.bit.GPIO8 = 0;         // GPIO
-	GpioCtrlRegs.GPADIR.bit.GPIO8 = 1;          // output
-	GpioCtrlRegs.GPAQSEL1.bit.GPIO8 = 0;        //Synch to SYSCLKOUT only
-	GpioCtrlRegs.GPAPUD.bit.GPIO8 = 1; 		//disable pull up
-	EDIS;
 }
 
 /*
@@ -214,6 +172,7 @@ void updateAllFilters()
 
 		A2filter.outputValue =  ((A2filter.alpha * AdcResult.ADCRESULT2) + (((one_fixed_point - A2filter.alpha) * A2filter.outputValue) >> 16));
 		A2filter.filtered_value = A2filter.outputValue >> 16;
+
 		A3filter.outputValue =  ((A3filter.alpha * AdcResult.ADCRESULT3) + (((one_fixed_point - A3filter.alpha) * A3filter.outputValue) >> 16));
 		A3filter.filtered_value = A3filter.outputValue >> 16;
 
@@ -253,15 +212,8 @@ void updateAllFilters()
 		B7filter.outputValue =  ((B7filter.alpha * AdcResult.ADCRESULT15) + (((one_fixed_point - B7filter.alpha) * B7filter.outputValue) >> 16));
 		B7filter.filtered_value = B7filter.outputValue >> 16;
 
-
-
-
-		GpioDataRegs.GPADAT.bit.GPIO2 = GPIO26_COUNTER & 0x01;
-		GpioDataRegs.GPADAT.bit.GPIO4 = (GPIO26_COUNTER & 0x02)>> 1;
-		GpioDataRegs.GPADAT.bit.GPIO6 = (GPIO26_COUNTER & 4) >> 2;
 		if(count >= 100)
 		{
-			GpioDataRegs.GPASET.bit.GPIO8 = 1;
 
 			GPIO19filter.outputValue = ((GPIO19filter.alpha * GPIO19_COUNTER) + (((one_fixed_point - GPIO19filter.alpha) * GPIO19filter.outputValue) >> 16));
 			GPIO19filter.filtered_value = (float)((GPIO19filter.outputValue  * GPIO19_FREQ) >> 16)/100.0;
@@ -275,7 +227,6 @@ void updateAllFilters()
 		else
 		{
 			count++;
-			GpioDataRegs.GPACLEAR.bit.GPIO8 = 1;
 		}
 
 }

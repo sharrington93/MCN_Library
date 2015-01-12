@@ -138,7 +138,7 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
  *
  *  Returns 1 if message was inserted successfully and 0 if not.
  */
-int InsertCANMessage(int Mbox, unsigned int MDH, unsigned int MDL);
+int InsertCANMessage(int Mbox, unsigned long MDH, unsigned long MDL);
 
 #define COMMAND_BOX 	0
 #define HEARTBEAT_BOX 	1
