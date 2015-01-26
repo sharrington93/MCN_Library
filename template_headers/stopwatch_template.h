@@ -47,6 +47,12 @@ void StopStopWatch(stopwatch_struct* watch);
  */
 void StopWatchRestart(stopwatch_struct* watch);
 
+/**
+ * Restarts the stopwatch so that the time is 0. And changes the max time
+ */
+void StopWatchRestartSetTime(stopwatch_struct* watch, unsigned long time);
+
+
 
 #define SENDCAN_STOPWATCH 	50 //100 uS
 

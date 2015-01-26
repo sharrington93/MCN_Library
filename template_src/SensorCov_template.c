@@ -12,6 +12,7 @@ sys_ops_struct ops_temp_sys, sc_start_ops;
 sys_data_struct data_temp_sys;
 stopwatch_struct* conv_watch_in_sys;
 
+
 void SystemSensorInit(unsigned int time)
 {
 

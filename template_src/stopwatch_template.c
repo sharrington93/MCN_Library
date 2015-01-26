@@ -46,6 +46,12 @@ stopwatch_struct* StartStopWatch(unsigned int time)
 	return watch;
 }
 
+void StopWatchRestartSetTime(stopwatch_struct* watch, unsigned long time)
+{
+	watch->Start = StopWatch.InterruptCount;
+	watch->Time = time;
+}
+
 void StopWatchRestart(stopwatch_struct* watch)
 {
 	watch->Start = StopWatch.InterruptCount;
