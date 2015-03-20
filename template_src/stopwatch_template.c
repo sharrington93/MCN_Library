@@ -50,6 +50,7 @@ void StopWatchRestartSetTime(stopwatch_struct* watch, unsigned long time)
 {
 	watch->Start = StopWatch.InterruptCount;
 	watch->Time = time;
+	watch->StopwatchComplete = 0;
 }
 
 void StopWatchRestart(stopwatch_struct* watch)
