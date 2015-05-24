@@ -26,6 +26,7 @@ void SystemClockSetup()
 	// Reset interrupt counters:
 	clock.InterruptCount = 0;
 
+	Sys_ClockTicks.HeartBeat = 0;
 	ConfigCpuTimer(&clock,CPU_FREQ_MHZ, SYSTEM_CLOCK_PERIOD);
 
 	//pie interrupt
@@ -50,6 +51,7 @@ void InitializeCpuTimer2(float clock_period)
 	// Reset interrupt counters:
 	CPUTimer2.InterruptCount = 0;
 
+	Sys_ClockTicks.HeartBeat = 0;
 	ConfigCpuTimer(&CPUTimer2, CPU_FREQ_MHZ, clock_period);
 
 	//pie interrupt
