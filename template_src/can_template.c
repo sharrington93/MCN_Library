@@ -168,6 +168,7 @@ void BUS_OFF()
     EDIS;
 }
 
+
 void CopyMCToShadow()
 {
 	SystemShadow->CANMC.all = ECanaRegs.CANMC.all;
@@ -205,10 +206,12 @@ char FillHeartbeat(unsigned int Mbox, unsigned int userFlags)
 
 void CheckBusOff()
 {
+	/*
 	if (SystemShadow->CANMC.bit.CCR == 1)
 	{
 		BUS_OFF();
 	}
+	*/
 }
 
 void CreateMask(unsigned int Mbox)
