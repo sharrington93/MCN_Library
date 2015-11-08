@@ -90,7 +90,9 @@ void ConfigGPIOSensor(Uint32 alpha, float Sample_Frequency, int pin, Uint16 GPAP
 	{
 		GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 0;	//GPIO
 		GpioCtrlRegs.GPADIR.bit.GPIO26 = 0;		//input
-		GpioCtrlRegs.GPAQSEL2.bit.GPIO26 = 01;	//Synch to SYSCLKOUT only=0, GPIO 3sample qual =01
+		GpioCtrlRegs.GPAQSEL2.bit.GPIO26 = 01;	//Synch to SYSCLKOUT only=0, GPIO 3sample qual =01,6samp=10
+		GpioCtrlRegs.GPACTRL.bit.QUALPRD3 = 0xFF;	//Sampling frequency = SYSCLKOUT/510
+
 		GpioCtrlRegs.GPAPUD.bit.GPIO26 = GPAPUD;
 
 		//Setup interrupt
