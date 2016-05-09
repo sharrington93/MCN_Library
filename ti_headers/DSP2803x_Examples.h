@@ -64,14 +64,14 @@ extern "C" {
 
 -----------------------------------------------------------------------------*/
 
-#define CPU_RATE   16.667L   // for a 60MHz CPU clock speed (SYSCLKOUT)
+//#define CPU_RATE   16.667L   // for a 60MHz CPU clock speed (SYSCLKOUT)
 //#define CPU_RATE   20.000L   // for a 50MHz CPU clock speed  (SYSCLKOUT)
 //#define CPU_RATE   25.000L   // for a 40MHz CPU clock speed  (SYSCLKOUT)
 //#define CPU_RATE   33.333L   // for a 30MHz CPU clock speed  (SYSCLKOUT)
 //#define CPU_RATE   41.667L   // for a 24MHz CPU clock speed  (SYSCLKOUT)
 //#define CPU_RATE   50.000L   // for a 20MHz CPU clock speed  (SYSCLKOUT)
 //#define CPU_RATE   66.667L   // for a 15MHz CPU clock speed  (SYSCLKOUT)
-//#define CPU_RATE  100.000L   // for a 10MHz CPU clock speed  (SYSCLKOUT)
+#define CPU_RATE  100.000L   // for a 10MHz CPU clock speed  (SYSCLKOUT)
 
 //----------------------------------------------------------------------------
 

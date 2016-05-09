@@ -57,6 +57,7 @@ void ConfigGPButton()
 	GpioCtrlRegs.GPADIR.bit.GPIO11 = 0;          // input
 	GpioCtrlRegs.GPAQSEL1.bit.GPIO11 = 0;        //Synch to SYSCLKOUT only
 	GpioCtrlRegs.GPAPUD.bit.GPIO11 = 0; 		//enable pull up
+	GpioDataRegs.GPADAT.bit;
 	EDIS;
 }
 
