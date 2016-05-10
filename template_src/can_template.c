@@ -70,6 +70,7 @@ void FinishCANInit()
 	ECanaRegs.CANMIL.all = SystemShadow->CANMIL.all;
 	ECanaRegs.CANMD.all = SystemShadow->CANMD.all;
 	ECanaRegs.CANME.all = SystemShadow->CANME.all;
+	ECanaRegs.CANTOC.all = SystemShadow->CANTOC.all;
 	SystemShadow->CANMC.all = ECanaRegs.CANMC.all;
 	SystemShadow->CANMC.bit.STM = 0;    // No self-test mode
 	ECanaRegs.CANMC.all = SystemShadow->CANMC.all;
@@ -306,7 +307,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX2.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD2 = Mode; 			//transmit or receive
 		SystemShadow->CANME.bit.ME2 = 1;			//enable
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM2 = 1;
+			SystemShadow->CANMIL.bit.MIL2 = 1;
+		}
+
 		return 1;
+
 	case 3:
 		ECanaMboxes.MBOX3.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX3.MSGID.bit.AME = AME;
@@ -315,7 +323,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX3.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD3 = Mode;
 		SystemShadow->CANME.bit.ME3 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM3 = 1;
+			SystemShadow->CANMIL.bit.MIL3 = 1;
+		}
+
 		return 1;
+
 	case 4:
 		ECanaMboxes.MBOX4.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX4.MSGID.bit.AME = AME;
@@ -324,7 +339,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX4.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD4 = Mode;
 		SystemShadow->CANME.bit.ME4 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM4 = 1;
+			SystemShadow->CANMIL.bit.MIL4 = 1;
+		}
+
 		return 1;
+
 	case 5:
 		ECanaMboxes.MBOX5.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX5.MSGID.bit.AME = AME;
@@ -333,7 +355,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX5.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD5 = Mode;
 		SystemShadow->CANME.bit.ME5 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM5 = 1;
+			SystemShadow->CANMIL.bit.MIL5 = 1;
+		}
+
 		return 1;
+
 	case 6:
 		ECanaMboxes.MBOX6.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX6.MSGID.bit.AME = AME;
@@ -342,7 +371,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX6.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD6 = Mode;
 		SystemShadow->CANME.bit.ME6 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM6 = 1;
+			SystemShadow->CANMIL.bit.MIL6 = 1;
+		}
+
 		return 1;
+
 	case 7:
 		ECanaMboxes.MBOX7.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX7.MSGID.bit.AME = AME;
@@ -351,7 +387,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX7.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD7 = Mode;
 		SystemShadow->CANME.bit.ME7 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM7 = 1;
+			SystemShadow->CANMIL.bit.MIL7 = 1;
+		}
+
 		return 1;
+
 	case 8:
 		ECanaMboxes.MBOX8.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX8.MSGID.bit.AME = AME;
@@ -360,7 +403,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX8.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD8 = Mode;
 		SystemShadow->CANME.bit.ME8 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM8 = 1;
+			SystemShadow->CANMIL.bit.MIL8 = 1;
+		}
+
 		return 1;
+
 	case 9:
 		ECanaMboxes.MBOX9.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX9.MSGID.bit.AME = AME;
@@ -369,7 +419,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX9.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD9 = Mode;
 		SystemShadow->CANME.bit.ME9 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM9 = 1;
+			SystemShadow->CANMIL.bit.MIL9 = 1;
+		}
+
 		return 1;
+
 	case 10:
 		ECanaMboxes.MBOX10.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX10.MSGID.bit.AME = AME;
@@ -378,7 +435,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX10.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD10 = Mode;
 		SystemShadow->CANME.bit.ME10 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM10 = 1;
+			SystemShadow->CANMIL.bit.MIL10 = 1;
+		}
+
 		return 1;
+
 	case 11:
 		ECanaMboxes.MBOX11.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX11.MSGID.bit.AME = AME;
@@ -387,6 +451,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX11.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD11 = Mode;
 		SystemShadow->CANME.bit.ME11 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM11 = 1;
+			SystemShadow->CANMIL.bit.MIL11 = 1;
+		}
+
 		return 1;
 	case 12:
 		ECanaMboxes.MBOX12.MSGID.bit.IDE = IDE;
@@ -396,7 +466,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX12.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD12 = Mode;
 		SystemShadow->CANME.bit.ME12 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM12 = 1;
+			SystemShadow->CANMIL.bit.MIL12 = 1;
+		}
+
 		return 1;
+
 	case 13:
 		ECanaMboxes.MBOX13.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX13.MSGID.bit.AME = AME;
@@ -405,7 +482,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX13.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD13 = Mode;
 		SystemShadow->CANME.bit.ME13 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM13 = 1;
+			SystemShadow->CANMIL.bit.MIL13 = 1;
+		}
+
 		return 1;
+
 	case 14:
 		ECanaMboxes.MBOX14.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX14.MSGID.bit.AME = AME;
@@ -414,7 +498,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX14.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD14 = Mode;
 		SystemShadow->CANME.bit.ME14 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM14 = 1;
+			SystemShadow->CANMIL.bit.MIL14 = 1;
+		}
+
 		return 1;
+
 	case 15:
 		ECanaMboxes.MBOX15.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX15.MSGID.bit.AME = AME;
@@ -423,7 +514,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX15.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD15 = Mode;
 		SystemShadow->CANME.bit.ME15 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM15 = 1;
+			SystemShadow->CANMIL.bit.MIL15 = 1;
+		}
+
 		return 1;
+
 	case 16:
 		ECanaMboxes.MBOX16.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX16.MSGID.bit.AME = AME;
@@ -432,7 +530,14 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX16.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD16 = Mode;
 		SystemShadow->CANME.bit.ME16 = 1;
+		if(Mode == 1)
+		{
+			SystemShadow->CANMIM.bit.MIM16 = 1;
+			SystemShadow->CANMIL.bit.MIL16 = 1;
+		}
+
 		return 1;
+
 	case 17:
 		ECanaMboxes.MBOX17.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX17.MSGID.bit.AME = AME;
@@ -441,6 +546,11 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX17.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD17 = Mode;
 		SystemShadow->CANME.bit.ME17 = 1;
+		if(Mode == 1){
+					SystemShadow->CANMIM.bit.MIM17 = 1;
+					SystemShadow->CANMIL.bit.MIL17 = 1;
+		}
+
 		return 1;
 	case 18:
 		ECanaMboxes.MBOX18.MSGID.bit.IDE = IDE;
@@ -450,6 +560,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX18.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD18 = Mode;
 		SystemShadow->CANME.bit.ME18 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM18 = 1;
+					SystemShadow->CANMIL.bit.MIL18 = 1;
+				}
+
 		return 1;
 	case 19:
 		ECanaMboxes.MBOX19.MSGID.bit.IDE = IDE;
@@ -459,6 +575,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX19.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD19 = Mode;
 		SystemShadow->CANME.bit.ME19 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM19 = 1;
+					SystemShadow->CANMIL.bit.MIL19 = 1;
+				}
+
 		return 1;
 	case 20:
 		ECanaMboxes.MBOX20.MSGID.bit.IDE = IDE;
@@ -468,15 +590,27 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX20.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD20 = Mode;
 		SystemShadow->CANME.bit.ME20 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM20 = 1;
+					SystemShadow->CANMIL.bit.MIL20 = 1;
+				}
+
 		return 1;
 	case 21:
 		ECanaMboxes.MBOX21.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX21.MSGID.bit.AME = AME;
 		ECanaMboxes.MBOX21.MSGID.bit.AAM = AAM;
-		ECanaMboxes.MBOX21.MSGCTRL.bit.DLC = DLC;
+		ECanaMboxes.MBOX21.MSGCTRL.bit.DLC = DLC; le bleh
 		ECanaMboxes.MBOX21.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD21 = Mode;
 		SystemShadow->CANME.bit.ME21 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM21 = 1;
+					SystemShadow->CANMIL.bit.MIL21 = 1;
+				}
+
 		return 1;
 	case 22:
 		ECanaMboxes.MBOX22.MSGID.bit.IDE = IDE;
@@ -486,6 +620,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX22.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD22 = Mode;
 		SystemShadow->CANME.bit.ME22 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM22 = 1;
+					SystemShadow->CANMIL.bit.MIL22 = 1;
+				}
+
 		return 1;
 	case 23:
 		ECanaMboxes.MBOX23.MSGID.bit.IDE = IDE;
@@ -495,6 +635,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX23.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD23 = Mode;
 		SystemShadow->CANME.bit.ME23 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM23 = 1;
+					SystemShadow->CANMIL.bit.MIL23 = 1;
+				}
+
 		return 1;
 	case 24:
 		ECanaMboxes.MBOX24.MSGID.bit.IDE = IDE;
@@ -504,6 +650,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX24.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD24 = Mode;
 		SystemShadow->CANME.bit.ME24 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM24 = 1;
+					SystemShadow->CANMIL.bit.MIL24 = 1;
+				}
+
 		return 1;
 	case 25:
 		ECanaMboxes.MBOX25.MSGID.bit.IDE = IDE;
@@ -513,6 +665,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX25.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD25 = Mode;
 		SystemShadow->CANME.bit.ME25 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM25 = 1;
+					SystemShadow->CANMIL.bit.MIL25 = 1;
+				}
+
 		return 1;
 	case 26:
 		ECanaMboxes.MBOX26.MSGID.bit.IDE = IDE;
@@ -522,6 +680,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX26.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD26 = Mode;
 		SystemShadow->CANME.bit.ME26 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM26 = 1;
+					SystemShadow->CANMIL.bit.MIL26 = 1;
+				}
+
 		return 1;
 	case 27:
 		ECanaMboxes.MBOX27.MSGID.bit.IDE = IDE;
@@ -531,6 +695,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX27.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD27 = Mode;
 		SystemShadow->CANME.bit.ME27 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM27 = 1;
+					SystemShadow->CANMIL.bit.MIL27 = 1;
+				}
+
 		return 1;
 	case 28:
 		ECanaMboxes.MBOX28.MSGID.bit.IDE = IDE;
@@ -540,6 +710,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX28.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD28 = Mode;
 		SystemShadow->CANME.bit.ME28 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM28 = 1;
+					SystemShadow->CANMIL.bit.MIL28 = 1;
+				}
+
 		return 1;
 	case 29:
 		ECanaMboxes.MBOX29.MSGID.bit.IDE = IDE;
@@ -549,6 +725,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX29.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD29 = Mode;
 		SystemShadow->CANME.bit.ME29 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM29 = 1;
+					SystemShadow->CANMIL.bit.MIL29 = 1;
+				}
+
 		return 1;
 	case 30:
 		ECanaMboxes.MBOX30.MSGID.bit.IDE = IDE;
@@ -558,6 +740,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX30.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD30 = Mode;
 		SystemShadow->CANME.bit.ME30 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM30 = 1;
+					SystemShadow->CANMIL.bit.MIL30 = 1;
+				}
+
 		return 1;
 	case 31:
 		ECanaMboxes.MBOX31.MSGID.bit.IDE = IDE;
@@ -567,6 +755,12 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX31.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD31 = Mode;
 		SystemShadow->CANME.bit.ME31 = 1;
+		if(Mode == 1)
+				{
+					SystemShadow->CANMIM.bit.MIM31 = 1;
+					SystemShadow->CANMIL.bit.MIL31 = 1;
+				}
+
 		return 1;
 	default:
 		return 0;
