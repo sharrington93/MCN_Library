@@ -225,24 +225,13 @@ void CreateMask(unsigned int Mbox)
 
 void ReadCommand()
 {
-	Uint32 ops_id;
-	Uint32 dummy;
-
-	//todo Nathan: Define Command frame
-	//proposed:
-	//HIGH 4 BYTES = Uint32 ID
-	//LOW 4 BYTES = Uint32 change to
-	ops_id = ECanaMboxes.MBOX0.MDH.all;
-	dummy = ECanaMboxes.MBOX0.MDL.all;
-	switch (ops_id)
+	// Enter bootload if MSG contents 0xFFFF 0xFFFF 0xFFFF 0xFFFF
+	if(ECanaMboxes.MBOX0.MDH.all == 0xFFFFFFFF && ECanaMboxes.MBOX0.MDL.all == 0xFFFFFFFF)
 	{
-	case OPS_ID_STATE:
-		memcpy(&sys_ops.State,&dummy,sizeof sys_ops.State);
-		break;
-	case OPS_ID_STOPWATCHERROR:
-		memcpy(&sys_ops.SystemFlags.all,&dummy,sizeof sys_ops.SystemFlags.all);
-		break;
+		SetupBootload();
+		SystemPowerDown();
 	}
+
 	SystemShadow->CANRMP.bit.RMP0 = 1;
 }
 
@@ -601,7 +590,7 @@ int CreateCANMailbox(int mailboxNum, int IDE, int AME, int AAM, int DLC, int STD
 		ECanaMboxes.MBOX21.MSGID.bit.IDE = IDE;
 		ECanaMboxes.MBOX21.MSGID.bit.AME = AME;
 		ECanaMboxes.MBOX21.MSGID.bit.AAM = AAM;
-		ECanaMboxes.MBOX21.MSGCTRL.bit.DLC = DLC; le bleh
+		ECanaMboxes.MBOX21.MSGCTRL.bit.DLC = DLC;
 		ECanaMboxes.MBOX21.MSGID.bit.STDMSGID = STDMSGID;
 		SystemShadow->CANMD.bit.MD21 = Mode;
 		SystemShadow->CANME.bit.ME21 = 1;
