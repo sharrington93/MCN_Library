@@ -225,6 +225,12 @@ void CreateMask(unsigned int Mbox)
 
 void ReadCommand()
 {
+	if(ECanaMboxes.MBOX0.MDH.all == 0xAAAAAAAA && ECanaMboxes.MBOX0.MDL.all == 0xAAAAAAAA)
+	{
+		while(ECanaMboxes.MBOX0.MDH.all != 0xFFFFFFFF && ECanaMboxes.MBOX0.MDL.all != 0xFFFFFFFF);
+		SetupBootload();
+		SystemPowerDown();
+	}
 	// Enter bootload if MSG contents 0xFFFF 0xFFFF 0xFFFF 0xFFFF
 	if(ECanaMboxes.MBOX0.MDH.all == 0xFFFFFFFF && ECanaMboxes.MBOX0.MDL.all == 0xFFFFFFFF)
 	{
