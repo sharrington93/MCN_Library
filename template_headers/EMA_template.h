@@ -27,7 +27,7 @@ struct filter
 //Takes in 2 parameters, one being the structure while the other being the sample rate
 //The alpha value is calculated using this sample rate
 
-void EMA_Filter_Init(filter *f, int16 sampleRate, int16 clockPeriod);
+void EMA_Filter_Init(filter *f, Uint32 sampleRate, Uint32 clockPeriod);
 
 //This function updates the last input throttle and time elapsed to calculate the new throttle output
 

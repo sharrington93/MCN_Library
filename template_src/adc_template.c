@@ -246,5 +246,7 @@ __interrupt void ADCINT1_ISR(void)   // ADC  (Can also be ISR for INT10.1 when e
 	EINT;
 	// Update DSP filters
 	updateAllFilters();
+	EMA_Filter_Update();
+
 	DINT;
 }

@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include "adc_template.h"
 #include "gpio_template.h"
+#include "EMA_template.h"
 
 extern sys_ops_struct sys_ops;
 extern sys_data_struct sys_data;
